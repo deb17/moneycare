@@ -1,0 +1,6 @@
+{% extends 'expense/common.html' %}
+
+{% block buttons %}
+<a href="{{ url_for('expense.create') }}" class="btn btn-info">Reset</a>
+<a href="{{ url_for('expense.list_expenses') }}" class="btn btn-warning">Cancel</a>
+{% endblock %}

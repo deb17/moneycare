@@ -1,0 +1,8 @@
+__pycache__/
+.vscode/
+venv/
+.flaskenv
+.env
+data/
+data.db
+seed.py

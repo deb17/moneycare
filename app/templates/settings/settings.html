@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_field %}
+
+{% block styles %}
+{{ super() }}
+<style>
+  .form-check-input {
+    margin-top: 0;
+    margin-left: 2rem;
+    width: 1.55rem;
+    height: 1.55rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="py-4">Settings for user {{ current_user.username }}</h2>
+<form method="post" novalidate>
+  {{ form.csrf_token() }}
+  <div class="row">
+    <div class="col-sm-6">
+      {{ render_field(form.limit) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <!-- bootstrap-flask macro not used in order to place the label first -->
+      {{ form.allow_decimals.label(class_='form-check-label') }}
+      {{ form.allow_decimals(class_='form-check-input') }}
+    </div>
+  </div>
+  <fieldset class="form-group row mt-4">
+    <legend class="col-form-label col-sm-2 float-sm-left pt-0">Currency symbol</legend>
+    <div class="col-sm-4">
+      <!-- The following code is needed to place the help text inside the form group -->
+      <div class="form-group">
+        {{ form.ccy_iso.label(class_='form-control-label') }}
+        {% if form.ccy_iso.errors %}
+          {{ form.ccy_iso(class_='form-control is-invalid') }}
+        {% else %}
+          {{ form.ccy_iso(class_='form-control') }}
+        {% endif %}
+        {% for e in form.ccy_iso.errors %}
+          <div class="invalid-feedback">{{ e }}</div>
+        {% endfor %}           
+        <small class="form-text text-muted">
+          List of currency codes <a href="https://en.wikipedia.org/wiki/ISO_4217" target="_blank">ISO 4217</a>
+        </small>
+      </div>
+      {{ render_field(form.ccy_override) }}
+    </div>
+  </fieldset>
+  {{ render_field(form.submit, button_style='success') }}
+  <a href="{{ url_for('expense.create') }}" class="btn btn-warning">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block styles %}
+      <!-- Bootstrap CSS -->
+      {{ bootstrap.load_css() }}
+      <style>
+        body {
+          background-color: #ecf6fe;
+        }
+        .navbar {
+          background-color: #a0d3f8;
+        }
+        .mt-6 {
+          margin-top: 4rem;
+        }
+        label {
+          font-weight: bold;
+        }
+        legend {
+          font-weight: bold;
+        }
+        .navbar-nav-scroll {
+          max-height: 75vh;
+          overflow-y: auto;
+        }
+        @media (min-width: 992px) {
+          .navbar-expand-lg .navbar-nav-scroll {
+            overflow: visible;
+          }
+        }
+      </style>
+    {% endblock %}
+
+    <title>MoneyCare - {{ title }}</title>
+    {% endblock %}
+  </head>
+  <body>
+    {% from 'bootstrap/nav.html' import render_nav_item %}
+    
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light">
+      <a class="navbar-brand" href="/">MoneyCare</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse navbar-nav-scroll" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto">
+          {{ render_nav_item('main.dashboard', 'Dashboard') }}
+          {{ render_nav_item('expense.create', 'New expense') }}
+          {{ render_nav_item('expense.list_expenses', 'List expenses') }}
+          {{ render_nav_item('expense.create', 'Search') }}
+          {{ render_nav_item('expense.create', 'Budget') }}
+        </div>
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Settings
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item {{ 'active' if request.endpoint == 'settings.index' }}" href="{{ url_for('settings.index') }}">User</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item {{ 'active' if request.endpoint == 'settings.manage_tags' }}" href="{{ url_for('settings.manage_tags') }}">Tags</a>
+              <a class="dropdown-item {{ 'active' if request.endpoint == 'settings.manage_payment_modes' }}" href="{{ url_for('settings.manage_payment_modes') }}">Payment modes</a>
+            </div>
+          </li>
+          {{ render_nav_item('auth.logout', 'Sign out', use_li=True) }}
+        </ul>
+      </div>
+    </nav>
+
+    {% from 'bootstrap/utils.html' import render_messages %}
+    <div class="container mt-6">
+      {{ render_messages(dismissible=True) }}
+    </div>
+
+    <div class="container mb-4">
+      {% block content %}{% endblock %}
+    </div>
+
+    {% block scripts %}
+      <!-- Optional JavaScript -->
+      {{ bootstrap.load_js() }}
+    {% endblock %}
+  </body>
+</html>

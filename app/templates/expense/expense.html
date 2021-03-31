@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="py-4">Expense details</h2>
+<p><b>Created on: </b><br class="d-inline d-sm-none">{{ moment(exp.created_on).format('MMM Do YYYY, h:mm:ss a') }}</p>
+<p><b>Updated on: </b><br class="d-inline d-sm-none">{{ 'Never' if exp.created_on == exp.updated_on else moment(exp.updated_on).format('MMM Do YYYY, h:mm:ss a') }}</p>
+<p><b>Transaction date: </b><br class="d-inline d-sm-none">{{ moment(exp.date).format("MMM Do YYYY") }}</p>
+<p><b>Description: </b><br class="d-inline d-sm-none"><span>{{ exp.description }}</span></p>
+<p><b>Amount: </b><br class="d-inline d-sm-none">{{ exp.amount | format_currency }}</p>
+<p><b>Payment mode: </b><br class="d-inline d-sm-none">{{ exp.payment_mode.mode }}</p>
+<p><b>Comments: </b><br class="d-inline d-sm-none">{% if exp.comments %}<span class="d-inline-block">{{ exp.comments | safe }}</span>{% else %}None{% endif %}</p>
+<p><b>Tags: </b><br class="d-inline d-sm-none">
+{% if exp.tags %}
+  {% for tag in exp.tags %}
+  <span class="badge badge-primary">{{ tag.tagname }}</span>
+  {% endfor %}
+{% else %}
+None
+{% endif %}
+</p>
+<a href="{{ url_for('expense.edit_expense', id=exp.id, page=page) }}" class="btn btn-primary">Edit</a>
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
+<a href="{{ url_for('expense.list_expenses', page=page) }}" class="btn btn-secondary">Back</a>
+<!-- Modal -->
+{% set msg = 'Do you want to delete this expense?' %}
+{% set endpoint = 'expense.delete_expense' %}
+{% set kwargs = { 'id': exp.id } %}
+{% include 'deleteModal.html' %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}

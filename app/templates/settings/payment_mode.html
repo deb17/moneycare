@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+
+
+{% block content %}
+<h2 class="py-4">Payment modes of user {{ current_user.username }}</h2>
+<h4>Add mode</h4>
+<div class="row mb-4">
+  <div class="col-sm-4">
+    {{ render_form(form, novalidate=True) }}
+  </div>
+</div>
+<ol>
+  {% for pm in current_user.modes %}
+  <li class="mb-2"><a href="{{ url_for('settings.edit_mode', id=pm.id) }}">{{ pm.mode }}</a></li>
+  {% endfor %}
+</ol>
+{% endblock %}
