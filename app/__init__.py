@@ -11,7 +11,8 @@ from app.extensions import (
 )
 from app.blueprints.main import bp as main_bp
 from app.blueprints.settings import bp as settings_bp
-from app.blueprints.auth import bp as auth_bp
+from app.blueprints.auth import (bp as auth_bp, google_blueprint,
+                                 twitter_blueprint)
 from app.blueprints.expense import bp as expense_bp
 
 
@@ -27,6 +28,8 @@ def create_app():
     app.register_blueprint(main_bp)
     app.register_blueprint(settings_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(google_blueprint)
+    app.register_blueprint(twitter_blueprint)
     app.register_blueprint(expense_bp)
 
     return app

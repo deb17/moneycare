@@ -18,15 +18,34 @@
 <form method="post" novalidate>
   {{ form.csrf_token() }}
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-4">
       {{ render_field(form.limit) }}
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-4">
       <!-- bootstrap-flask macro not used in order to place the label first -->
       {{ form.allow_decimals.label(class_='form-check-label') }}
       {{ form.allow_decimals(class_='form-check-input') }}
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-sm-4">
+      <!-- The following code is needed to place the help text inside the form group -->
+      <div class="form-group">
+        {{ form.country_code.label(class_='form-control-label') }}
+        {% if form.country_code.errors %}
+          {{ form.country_code(class_='form-control is-invalid') }}
+        {% else %}
+          {{ form.country_code(class_='form-control') }}
+        {% endif %}
+        {% for e in form.country_code.errors %}
+          <div class="invalid-feedback">{{ e }}</div>
+        {% endfor %}           
+        <small class="form-text text-muted">
+          List of country codes <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" target="_blank">ISO 3166-1</a>
+        </small>
+      </div>
     </div>
   </div>
   <fieldset class="form-group row mt-4">

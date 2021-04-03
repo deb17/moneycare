@@ -17,8 +17,8 @@
 
 {% block content %}
 <h2 class="py-4">List of expenses in {{ year }}</h2>
-<small>Click on a serial number to see details.</small>
 <div class="d-none d-md-block">
+  <small>Click on a serial number to see details.</small>
   <table class="table table-bordered">
     <thead class="thead-dark">
       <tr>
@@ -43,14 +43,17 @@
   </table>
 </div>
 <div class="d-block d-md-none">
+  {% if expenses.total == 0 %}
+  <h3>No data.</h3>
+  {% endif %}
   {% for e in expenses.items %}
-  <ul class="list-group mb-3">
-    <li class="list-group-item list-group-item-info"># <b><a href="{{ url_for('expense.get_expense', id=e.id, page=expenses.page) }}">{{ (expenses.page - 1) * expenses.per_page + loop.index }}</a></b></li>
-    <li class="list-group-item list-group-item-info"><b>Date: </b>{{ moment(e.date).format('MMM Do YYYY') }}</li>
-    <li class="list-group-item list-group-item-info"><b>Description:</b><br>{{ e.description }}</li>
-    <li class="list-group-item list-group-item-info"><b>Payment mode:</b><br>{{ e.payment_mode.mode }}</li>
-    <li class="list-group-item list-group-item-info"><b>Amount: </b>{{ e.amount | format_currency }}</li>
-  </ul>
+  <div class="list-group mb-3">
+    <a href="{{ url_for('expense.get_expense', id=e.id, page=expenses.page) }}" class="list-group-item list-group-item-action list-group-item-info"># <b>{{ (expenses.page - 1) * expenses.per_page + loop.index }}</b></a>
+    <span class="list-group-item list-group-item-info"><b>Date: </b>{{ moment(e.date).format('MMM Do YYYY') }}</span>
+    <span class="list-group-item list-group-item-info"><b>Description:</b><br>{{ e.description }}</span>
+    <span class="list-group-item list-group-item-info"><b>Payment mode:</b><br>{{ e.payment_mode.mode }}</span>
+    <span class="list-group-item list-group-item-info"><b>Amount: </b>{{ e.amount | format_currency }}</span>
+  </div>
   {% endfor %}
 </div>
 {{ render_pagination(expenses, prev='prev', next='next') }}

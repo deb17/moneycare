@@ -1,28 +1,150 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
-from app.models import User
-from app.blueprints.auth.forms import LoginForm
+from flask_dance.contrib.google import make_google_blueprint, google
+from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
+
+from app.models import User, Social
+from app.extensions import db
+from app.blueprints.auth.forms import LoginForm, RegistrationForm
 
 
 bp = Blueprint('auth', __name__)
+google_blueprint = make_google_blueprint(
+    scope=[
+        'openid',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/userinfo.profile'],
+    redirect_to='auth.google_login'
+)
+twitter_blueprint = make_twitter_blueprint(redirect_to='auth.twitter_login')
 
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.dashboard'))
+        return redirect(url_for('main.home'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if (not user or not user.verify_password(form.password.data)):
-            flash('Invalid username or password')
-            return redirect(url_for('auth.login'))
-        login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('main.dashboard'))
-    return render_template('auth/login.html', form=form)
+        identity = form.identity.data
+        user = User.query.filter(
+            (User.uname == identity) | (User.email == identity)).first()
+        if user:
+            if user.verify_password(form.password.data):
+                login_user(user, remember=form.remember_me.data)
+                return redirect(
+                    request.args.get('next', url_for('main.dashboard'))
+                )
+        flash('Invalid credentials.', 'danger')
+
+    return render_template('auth/login.html', form=form, title='Sign in')
 
 
 @bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    try:
+        del google_blueprint.token
+    except Exception:
+        pass
+    try:
+        del twitter_blueprint.token
+    except Exception:
+        pass
+    return redirect(url_for('main.index'))
+
+
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        # Check if new user has already made a social login
+        u = User.query.join(User.social) \
+            .filter((Social.gmail == form.email.data) |
+                    (Social.tmail == form.email.data)) \
+            .first()
+
+        if u:
+            u.username = form.username.data
+            u.email = form.email.data
+        else:
+            u = User(
+                uname=form.username.data,
+                email=form.email.data
+            )
+
+        u.set_password(form.password.data)
+        db.session.add(u)
+        db.session.commit()
+        flash('You have registered successfully!', 'success')
+        return redirect(url_for('auth.login'))
+
+    return render_template('auth/register.html', form=form, title='Sign in')
+
+
+@bp.route('/google-login')
+def google_login():
+    if not google.authorized:
+        return redirect(url_for('google.login'))
+
+    resp = google.get('/oauth2/v1/userinfo')
+    retval = resp.json()
+
+    user = User.query.outerjoin(Social) \
+        .filter(
+            (Social.gmail == retval['email']) |
+            (Social.tmail == retval['email']) |
+            (User.email == retval['email'])).first()
+
+    if not user:
+        user = User()
+        user.social = Social(gname=retval['name'], gmail=retval['email'])
+        db.session.add(user)
+        db.session.commit()
+    elif not user.social:
+        user.social = Social(gname=retval['name'], gmail=retval['email'])
+        db.session.commit()
+    else:
+        user.social.gname = retval['name']
+        user.social.gmail = retval['email']
+        db.session.commit()
+
+    login_user(user)
+
+    return redirect(request.args.get('next', url_for('main.dashboard')))
+
+
+@bp.route('/twitter-login')
+def twitter_login():
+    if not twitter.authorized:
+        return redirect(url_for('twitter.login'))
+
+    resp = twitter.get('account/verify_credentials.json?include_email=true')
+    retval = resp.json()  # Note - email may not be present
+
+    user = User.query.outerjoin(Social) \
+        .filter(
+            (Social.gmail == retval['email']) |
+            (Social.tmail == retval['email']) |
+            (User.email == retval['email'])).first()
+
+    if not user:
+        user = User()
+        user.social = Social(handle=retval['screen_name'],
+                             tmail=retval.get('email'))
+        db.session.add(user)
+        db.session.commit()
+    elif not user.social:
+        user.social = Social(handle=retval['screen_name'],
+                             tmail=retval.get('email'))
+        db.session.commit()
+    else:
+        user.social.handle = retval['screen_name']
+        user.social.tmail = retval.get('email')
+        db.session.commit()
+
+    login_user(user)
+
+    return redirect(request.args.get('next', url_for('main.dashboard')))

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    <style>
+      body {
+        background-color: #f5fafe;
+        margin-top: 3rem;
+      }
+      label {
+        font-weight: bold;
+      }
+    </style>
+    {% endblock %}
+    <title>MoneyCare - {{ title }}</title>
+  </head>
+  <body>
+    {% from 'bootstrap/form.html' import render_form %}
+    {% from 'bootstrap/utils.html' import render_messages %}
+    {{ render_messages(dismissible=True, container=True) }}
+
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+
+    {% block scripts %}
+      {{ bootstrap.load_js() }}
+    {% endblock %}
+  </body>
+</html>

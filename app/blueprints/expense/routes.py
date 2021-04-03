@@ -7,7 +7,6 @@ from flask_login import login_required, current_user
 from app.models import Expense, PaymentMode
 from app.extensions import db
 from app.blueprints.expense.forms import ExpenseForm
-from app.blueprints.expense.utils import set_tags_on_expense
 
 bp = Blueprint('expense', __name__, url_prefix='/expense')
 
@@ -30,7 +29,7 @@ def create():
         e.amount = form.amount.data
         e.mode_id = int(form.pay_mode.data)
         e.comments = form.comments.data
-        set_tags_on_expense(form.taglist.data, e)
+        e.set_tags(form.taglist.data)
         db.session.add(e)
         db.session.commit()
         flash('New expense created.', 'success')
@@ -49,7 +48,7 @@ def list_expenses(page=1):
     expenses = Expense.query.filter(
         Expense.user_id == current_user.id,
         db.extract('year', Expense.date) == year) \
-        .order_by(Expense.date.desc()) \
+        .order_by(Expense.date.desc(), Expense.updated_on.desc()) \
         .paginate(page, current_app.config['ITEMS_PER_PAGE'])
 
     return render_template('expense/list.html', title='List expenses',
@@ -71,7 +70,14 @@ def get_expense(id):
 @login_required
 def delete_expense(id):
 
-    return 'test'
+    exp = Expense.query.get(id)
+    if exp.user_id != current_user.id:
+        abort(403)
+    db.session.delete(exp)
+    db.session.commit()
+    flash('The expense was deleted.', 'success')
+
+    return redirect(url_for('expense.list_expenses'))
 
 
 @bp.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -94,7 +100,7 @@ def edit_expense(id):
         form.populate_obj(exp)
         exp.mode_id = int(form.pay_mode.data)
         exp.tags = []
-        set_tags_on_expense(form.taglist.data, exp)
+        exp.set_tags(form.taglist.data)
         db.session.commit()
         return redirect(url_for('expense.get_expense', id=id, page=page))
 

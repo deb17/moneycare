@@ -10,6 +10,9 @@ class SettingsForm(FlaskForm):
 
     limit = IntegerField('Transaction limit', validators=[DataRequired()])
     allow_decimals = BooleanField('Allow decimals')
+    country_code = StringField('2 letter country code (to set locale)',
+                               validators=[DataRequired(),
+                                           Length(min=2, max=2)])
     ccy_iso = StringField('3 letter currency code',
                           validators=[DataRequired(), Length(min=3, max=3)])
     ccy_override = StringField('Override currency symbol',

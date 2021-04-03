@@ -4,23 +4,29 @@ from config import Config
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, current_user
 from currency_symbols import CurrencySymbols
+from restcountries.api import RestCountries
 
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True)
-    email = db.Column(db.String(128), unique=True)
+    uname = db.Column(db.String(64), unique=True, index=True)
+    email = db.Column(db.String(128), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String(6), default='member')
     expenses = db.relationship('Expense', backref='user', lazy='dynamic')
     tags = db.relationship('Tag', backref='user', lazy='dynamic')
     modes = db.relationship('PaymentMode', backref='user', lazy='dynamic')
     estimates = db.relationship('Budget', backref='user', lazy='dynamic')
+    social = db.relationship('Social', backref='user', uselist=False)
     limit = db.Column(db.Integer, default=1000)
+    country_code = db.Column(db.String(2), nullable=False,
+                             default=Config.DEFAULT_COUNTRY_CODE)
     ccy_iso = db.Column(db.String(3), nullable=False,
                         default=Config.DEFAULT_CURRENCY)
     ccy_override = db.Column(db.String(6))
+    locale = db.Column(db.String(10), nullable=False,
+                       default=Config.DEFAULT_LOCALE)
     allow_decimals = db.Column(db.Boolean, default=True)
 
     def __init__(self, **kwargs):
@@ -35,12 +41,28 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     @property
+    def username(self):
+
+        if self.email:
+            return self.uname
+        if self.social.gmail:
+            return self.social.gname
+        return self.social.handle
+
+    @username.setter
+    def username(self, value):
+        self.uname = value
+
+    @property
     def currency(self):
 
         if self.ccy_override:
             return self.ccy_override
 
-        return CurrencySymbols.get_symbol(self.ccy_iso)
+        symbol = CurrencySymbols.get_symbol(self.ccy_iso)
+        if symbol:
+            return symbol
+        return CurrencySymbols.get_symbol(Config.DEFAULT_CURRENCY)
 
     def add_default_modes(self):
 
@@ -49,6 +71,23 @@ class User(UserMixin, db.Model):
 
         self.modes = [p1, p2]
 
+    def set_locale(self, ccode):
+
+        restcountries = RestCountries()
+        try:
+            retval = restcountries.code(ccode)
+        except Exception:
+            pass
+        else:
+            country = retval
+            lang = country.languages[0].iso639_1
+            # choose English if available
+            for language in country.languages:
+                if language.iso639_1 == 'en':
+                    lang = 'en'
+
+            self.locale = f'{lang}-{ccode}'
+
     def __repr__(self):
         return f'<User: {self.username}>'
 
@@ -56,6 +95,16 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class Social(db.Model):
+    __tablename__ = 'social'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    gname = db.Column(db.String(64))
+    gmail = db.Column(db.String(128), unique=True, index=True)
+    handle = db.Column(db.String(64), unique=True, index=True)  # twitter
+    tmail = db.Column(db.String(128), unique=True, index=True)  # twitter
 
 
 tags = db.Table(
@@ -96,6 +145,16 @@ class Expense(db.Model):
 
         value = round(Decimal(value), 2)
         self.amount_str = str(value)
+
+    def set_tags(self, taglist):
+
+        for tagname in taglist.split(','):
+            if tagname:
+                tag = Tag.query.filter_by(
+                    user_id=self.user_id, tagname=tagname.lower()).first()
+                if not tag:
+                    tag = Tag(user_id=self.user_id, tagname=tagname.lower())
+                self.tags.append(tag)
 
     def __repr__(self):
         return f'<Expense: {self.amount}>'

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css')}}">
+    <style>
+      body {
+        background-color: #f5fafe;
+      }
+      .jumbotron {
+        background: url("{{ url_for('static', filename='images/money.jpg') }}") center / cover no-repeat fixed;
+        height: 75vh;
+        margin-bottom: 0;
+      }
+      .jumbotron span {
+        background-color: #fff;
+      }
+      .jumbotron h1 {
+        font-weight: bold;
+      }
+      #signin-btn {
+        padding: 5px;
+        display: inline-block;
+      }
+    </style>
+    <title>MoneyCare</title>
+  </head>
+  <body>
+    
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container text-center">
+        <h1 class="display-4"><span>MoneyCare</span></h1>
+        <p class="lead"><span>A comprehensive expense tracker. See below for features.</span></p>
+        <span id="signin-btn" class="mt-5"><a href="{{ url_for('auth.login' )}}" class="btn btn-lg btn-dark">Sign in</a></span>
+      </div>
+    </div>
+    <span class="float-right">Photo by <a href="https://unsplash.com/@giorgiotrovato?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"> Giorgio Trovato</a> on <a href="https://unsplash.com/s/photos/money?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"> Unsplash</a></span>
+  </body>
+</html>

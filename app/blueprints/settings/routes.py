@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, abort
 from flask_login import current_user, login_required
 
 from app.extensions import db
@@ -23,7 +23,11 @@ def index():
         u = current_user
         u.limit = form.limit.data
         u.allow_decimals = form.allow_decimals.data
-        u.ccy_iso = form.ccy_iso.data
+        u.ccy_iso = form.ccy_iso.data.upper()
+        form_ccode = form.country_code.data.upper()
+        if u.country_code != form_ccode:
+            u.set_locale(form_ccode)
+            u.country_code = form_ccode
         u.ccy_override = form.ccy_override.data.strip()
         db.session.commit()
         flash('Settings updated.', 'success')
@@ -55,6 +59,9 @@ def manage_tags():
 def delete_tag(id):
 
     tag = Tag.query.get(id)
+    if tag.user_id != current_user.id:
+        abort(403)
+
     db.session.delete(tag)
     db.session.commit()
     flash('The tag was deleted', 'success')
@@ -87,6 +94,9 @@ def manage_payment_modes():
 def edit_mode(id):
 
     old_mode = PaymentMode.query.get(id)
+    if old_mode.user_id != current_user.id:
+        abort(403)
+
     form = PaymentModeEditForm(obj=old_mode)
 
     if form.validate_on_submit():
@@ -104,6 +114,8 @@ def edit_mode(id):
 def delete_mode(id):
 
     mode = PaymentMode.query.get(id)
+    if mode.user_id != current_user.id:
+        abort(403)
 
     if mode.expenses.count() > 0:
         flash(

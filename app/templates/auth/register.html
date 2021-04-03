@@ -1,0 +1,12 @@
+{% extends 'auth/base.html' %}
+
+{% block content %}
+<a href="{{ url_for('main.index') }}" class="btn btn-secondary">Back</a>
+<h1 class="text-center font-weight-bold my-3">Register</h1>
+<div class="row">
+  <div class="col-sm-4 offset-sm-4">
+    {{ render_form(form, novalidate=True) }}
+    <p class="lead mt-2">Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+  </div>
+</div>
+{% endblock %}

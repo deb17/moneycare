@@ -21,6 +21,8 @@ def get_context(year):
     curr_month_abbr = utcnow.strftime('%b')
 
     ctx = {
+        'ccy': current_user.currency,
+        'locale': current_user.locale,
         'year': year,
         'month': curr_month_full,
         'month-totals': get_month_totals(expenses),
@@ -30,7 +32,10 @@ def get_context(year):
         'payment-mode': get_expenses_by_payment_mode(expenses)
     }
 
+    # Following set month-totals defaultdict with current month if it is not
+    # already present
     ctx['month-total'] = ctx['month-totals'][curr_month_abbr]
+
     ctx['num-of-months'] = len(ctx['month-totals'])
 
     if year == curr_year:

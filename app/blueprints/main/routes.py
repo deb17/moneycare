@@ -13,7 +13,8 @@ bp = Blueprint('main', __name__)
 
 @bp.route('/')
 def index():
-    return 'test'
+
+    return render_template('main/index.html')
 
 
 @bp.route('/home')
@@ -39,8 +40,6 @@ def dashboard():
     if form.validate_on_submit():
         year = int(form.year.data)
         ctx = get_context(year)
-        return render_template('main/dashboard.html', form=form, ctx=ctx,
-                               title='Dashboard')
     elif request.method == 'GET':
         current_year = datetime.utcnow().year
         ctx = get_context(current_year)
