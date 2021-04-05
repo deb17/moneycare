@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from flask_mail import Mail
 
 debug_toolbar = DebugToolbarExtension()
 db = SQLAlchemy()
@@ -14,3 +15,4 @@ login_manager.login_view = 'auth.login'
 
 bootstrap = Bootstrap()
 moment = Moment()
+mail = Mail()

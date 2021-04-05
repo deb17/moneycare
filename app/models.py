@@ -1,10 +1,14 @@
 from decimal import Decimal
-from app.extensions import db, login_manager
-from config import Config
+
+from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask_login import UserMixin, current_user
 from currency_symbols import CurrencySymbols
 from restcountries.api import RestCountries
+
+from app.extensions import db, login_manager
+from config import Config
 
 
 class User(UserMixin, db.Model):
@@ -39,6 +43,24 @@ class User(UserMixin, db.Model):
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def generate_reset_token(self, expiration=3600):
+
+        s = Serializer(current_app.config['SECRET_KEY'], expiration)
+        return s.dumps({'id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token.encode('utf-8'))
+            id = int(data['id'])
+        except Exception:
+            return None
+
+        user = User.query.get(id)
+        return user
 
     @property
     def username(self):
@@ -87,6 +109,10 @@ class User(UserMixin, db.Model):
                     lang = 'en'
 
             self.locale = f'{lang}-{ccode}'
+
+    def is_admin(self):
+
+        return self.role == 'admin'
 
     def __repr__(self):
         return f'<User: {self.username}>'

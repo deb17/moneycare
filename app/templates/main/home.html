@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/utils.html' import render_icon %}
+
+{% block content %}
+<h1 class="pt-5">Hi {{ current_user.username }}!</h1>
+<h2>Welcome to MoneyCare.</h2>
+<h3>An app that meets your day-to-day needs of keeping track of your expenses.</h3>
+<p class="lead mt-3">{{ render_icon('graph-up', color='success') }}<a href="{{ url_for('main.dashboard') }}">Visit the dashboard</a></p>
+<p class="lead">{{ render_icon('list-ol', color='info') }}<a href="{{ url_for('expense.list_expenses') }}">See all your expenses in the current year</a></p>
+<p class="lead">{{ render_icon('cash', color='primary') }}<a href="{{ url_for('expense.create') }}">Add an expense</a></p>
+<p class="lead">{{ render_icon('search', color='dark') }}<a href="{{ url_for('search.index') }}">Search for an expense by various criteria</a></p>
+{% endblock %}

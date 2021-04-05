@@ -7,13 +7,16 @@ from app.extensions import (
     migrate,
     login_manager,
     bootstrap,
-    moment
+    moment,
+    mail
 )
 from app.blueprints.main import bp as main_bp
 from app.blueprints.settings import bp as settings_bp
 from app.blueprints.auth import (bp as auth_bp, google_blueprint,
                                  twitter_blueprint)
 from app.blueprints.expense import bp as expense_bp
+from app.blueprints.search import bp as search_bp
+from app.blueprints.admin import admin_create_module
 
 
 def create_app():
@@ -21,6 +24,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    admin_create_module(app)
     register_extensions(app)
     register_filters(app)
     register_errorhandlers(app)
@@ -31,6 +35,7 @@ def create_app():
     app.register_blueprint(google_blueprint)
     app.register_blueprint(twitter_blueprint)
     app.register_blueprint(expense_bp)
+    app.register_blueprint(search_bp)
 
     return app
 
@@ -43,6 +48,7 @@ def register_extensions(app):
     login_manager.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
+    mail.init_app(app)
 
 
 def register_filters(app):

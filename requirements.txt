@@ -7,6 +7,8 @@ flask-wtf==0.14.3
 flask-debugtoolbar==0.11.0
 flask-moment==0.11.0
 flask-dance==3.3.1
+flask-mail==0.9.1
+flask-admin==1.5.7
 python-dotenv==0.15.0
 currency-symbols==2.0.0
 restcountries==1.1.3

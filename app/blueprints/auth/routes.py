@@ -5,7 +5,13 @@ from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
 
 from app.models import User, Social
 from app.extensions import db
-from app.blueprints.auth.forms import LoginForm, RegistrationForm
+from app.blueprints.auth.forms import (
+    LoginForm,
+    RegistrationForm,
+    PasswordResetRequestForm,
+    PasswordResetForm
+)
+from app.blueprints.auth.email import send_email
 
 
 bp = Blueprint('auth', __name__)
@@ -148,3 +154,42 @@ def twitter_login():
     login_user(user)
 
     return redirect(request.args.get('next', url_for('main.dashboard')))
+
+
+@bp.route('/reset', methods=['GET', 'POST'])
+def password_reset_request():
+    if not current_user.is_anonymous:
+        return redirect(url_for('main.home'))
+    form = PasswordResetRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            token = user.generate_reset_token()
+            send_email(user.email, 'Reset Your Password',
+                       'auth/email/reset_password',
+                       user=user, token=token)
+        flash('An email with instructions to reset your password has been '
+              'sent to you.', 'info')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/reset_password.html',
+                           form=form, title='Reset password')
+
+
+@bp.route('/reset/<token>', methods=['GET', 'POST'])
+def password_reset(token):
+    if not current_user.is_anonymous:
+        return redirect(url_for('main.home'))
+
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        user = User.verify_reset_token(token)
+        if user:
+            user.set_password(form.password.data)
+            db.session.commit()
+            flash('Your password has been updated.', 'info')
+            return redirect(url_for('auth.login'))
+
+        flash('Password could not be updated', 'danger')
+
+    return render_template('auth/reset_password.html',
+                           form=form, title='Reset password')

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 
 from app.extensions import db
@@ -14,6 +14,9 @@ bp = Blueprint('main', __name__)
 @bp.route('/')
 def index():
 
+    if current_user.is_authenticated:
+        return redirect(url_for('main.home'))
+
     return render_template('main/index.html')
 
 
@@ -21,7 +24,7 @@ def index():
 @login_required
 def home():
 
-    return 'test'
+    return render_template('main/home.html', title='Home')
 
 
 @bp.route('/dashboard', methods=['GET', 'POST'])
