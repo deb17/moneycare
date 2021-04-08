@@ -29,17 +29,26 @@
           {{ render_nav_item('expense.create', 'New expense') }}
           {{ render_nav_item('expense.list_expenses', 'List expenses') }}
           {{ render_nav_item('search.index', 'Search') }}
-          {{ render_nav_item('expense.create', 'Budget') }}
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Budget
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-1">
+              <a class="dropdown-item {{ 'active' if request.endpoint == 'budget.home' }}" href="{{ url_for('budget.home') }}">Home</a>
+              <a class="dropdown-item {{ 'active' if request.endpoint == 'budget.new_entry' }}" href="{{ url_for('budget.new_entry') }}">Make an entry</a>
+              <a class="dropdown-item {{ 'active' if request.endpoint == 'budget.list_entries' }}" href="{{ url_for('budget.list_entries') }}">List entries</a>
+            </div>
+          </div>
         </div>
         <ul class="navbar-nav">
           {% if current_user.is_admin() %}
           {{ render_nav_item('admin.index', 'Admin', use_li=True) }}
           {% endif %}
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown-2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Settings
             </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown-2">
               <a class="dropdown-item {{ 'active' if request.endpoint == 'settings.index' }}" href="{{ url_for('settings.index') }}">User</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item {{ 'active' if request.endpoint == 'settings.manage_tags' }}" href="{{ url_for('settings.manage_tags') }}">Tags</a>

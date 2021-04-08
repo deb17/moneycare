@@ -49,7 +49,7 @@ class Expense(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    description = db.Column(db.String(128), nullable=False)
+    description = db.Column(db.String(64), nullable=False, index=True)
     amount_str = db.Column(db.String(12), nullable=False)
     date = db.Column(db.Date, index=True)
     mode_id = db.Column(db.Integer, db.ForeignKey('modes.id'))

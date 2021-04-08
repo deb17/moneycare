@@ -29,8 +29,9 @@ def admin_create_module(app):
 
     admin.add_view(UserView(User, db.session))
     admin.add_view(ExpenseView(Expense, db.session, endpoint='expenses'))
+    admin.add_view(CustomModelView(Budget, db.session, endpoint='budget_'))
 
-    models = [Social, Tag, PaymentMode, Budget]
+    models = [Social, Tag, PaymentMode]
 
     for model in models:
         admin.add_view(CustomModelView(model, db.session))

@@ -171,7 +171,9 @@ def search_main(form, page):
 
     result = q10.paginate(page, current_app.config['SEARCH_ITEMS_PER_PAGE'],
                           False)
-    total = q10.with_entities(db.func.sum(Expense.amount)).scalar() or 0
+    total = 0
+    for exp in q10:
+        total += exp.amount
 
     return result, total
 

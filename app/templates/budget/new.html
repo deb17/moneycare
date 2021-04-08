@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block content %}
+<h2 class="py-4">Make an estimate entry</h2>
+{{ render_form(form, novalidate=True) }}
+{% endif %}

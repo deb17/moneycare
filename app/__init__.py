@@ -16,6 +16,7 @@ from app.blueprints.auth import (bp as auth_bp, google_blueprint,
                                  twitter_blueprint)
 from app.blueprints.expense import bp as expense_bp
 from app.blueprints.search import bp as search_bp
+from app.blueprints.budget import bp as budget_bp
 from app.blueprints.admin import admin_create_module
 
 
@@ -36,6 +37,7 @@ def create_app():
     app.register_blueprint(twitter_blueprint)
     app.register_blueprint(expense_bp)
     app.register_blueprint(search_bp)
+    app.register_blueprint(budget_bp)
 
     return app
 
