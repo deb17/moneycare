@@ -31,7 +31,7 @@ def index():
         u.ccy_override = form.ccy_override.data.strip()
         db.session.commit()
         flash('Settings updated.', 'success')
-        return redirect(url_for('main.dashboard'))
+        return redirect(url_for('expense.list_expenses'))
 
     return render_template('settings/settings.html', title='Settings',
                            form=form)

@@ -1,0 +1,24 @@
+body {
+  background-color: #f5fafe;
+}
+.navbar {
+  background-color: #a0d3f8;
+}
+.mt-6 {
+  margin-top: 4rem;
+}
+label {
+  font-weight: bold;
+}
+legend {
+  font-weight: bold;
+}
+.navbar-nav-scroll {
+  max-height: 75vh;
+  overflow-y: auto;
+}
+@media (min-width: 992px) {
+  .navbar-expand-lg .navbar-nav-scroll {
+    overflow: visible;
+  }
+}

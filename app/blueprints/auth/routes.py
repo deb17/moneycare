@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import (Blueprint, render_template, redirect,
+                   url_for, flash, request, session)
 from flask_login import login_user, logout_user, current_user
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
@@ -56,6 +57,10 @@ def logout():
         del twitter_blueprint.token
     except Exception:
         pass
+    try:
+        del session['search-data']
+    except Exception:
+        pass
     return redirect(url_for('main.index'))
 
 
@@ -87,7 +92,7 @@ def register():
         flash('You have registered successfully!', 'success')
         return redirect(url_for('auth.login'))
 
-    return render_template('auth/register.html', form=form, title='Sign in')
+    return render_template('auth/register.html', form=form, title='Sign up')
 
 
 @bp.route('/google-login')

@@ -1,0 +1,18 @@
+body {
+  background-color: #f5fafe;
+}
+.jumbotron {
+  background: url(/static/images/money.jpg) center / cover no-repeat fixed;
+  height: 75vh;
+  margin-bottom: 0;
+}
+.jumbotron span {
+  background-color: #fff;
+}
+.jumbotron h1 {
+  font-weight: bold;
+}
+#signin-btn {
+  padding: 5px;
+  display: inline-block;
+}

@@ -14,6 +14,9 @@ def get_context(year):
                 db.extract('year', Expense.date) == year) \
         .order_by(Expense.date)
 
+    # done to limit the number of sqlalchemy queries later on
+    exp_list = expenses.all()
+
     utcnow = datetime.utcnow()
     curr_year = utcnow.year
     curr_month = utcnow.month
@@ -25,11 +28,12 @@ def get_context(year):
         'locale': current_user.locale,
         'year': year,
         'month': curr_month_full,
-        'month-totals': get_month_totals(expenses),
+        'txn-count': len(exp_list),
+        'month-totals': get_month_totals(exp_list),
         'current-month-expenses': get_curr_mon_exp(curr_month, expenses),
         'limit': current_user.limit,
-        'scatter': get_outliers(expenses),
-        'payment-mode': get_expenses_by_payment_mode(expenses)
+        'scatter': get_outliers(exp_list),
+        'payment-mode': get_expenses_by_payment_mode(exp_list)
     }
 
     # Following set month-totals defaultdict with current month if it is not

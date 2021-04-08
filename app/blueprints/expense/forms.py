@@ -18,6 +18,7 @@ class ExpenseForm(FlaskForm):
     )
     amount = DecimalField(
         'Transaction amount',
+        places=None,
         validators=[DataRequired()],
         render_kw={'autocomplete': 'off'}
     )

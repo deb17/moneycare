@@ -17,19 +17,27 @@
     {% if 'ytd' in ctx %}
     {% set year_total = ctx['ytd'] %}
     <div class="row mt-3">
-      <div class="col-sm-5 offset-sm-1">
+      <div class="col-sm-4">
         <div class="card text-center">
-          <h2 class="card-header text-white bg-primary">ytd expenditure ({{ ctx['year'] }})</h2>
+          <h3 class="card-header text-white bg-primary">ytd expenditure ({{ ctx['year'] }})</h3>
           <div class="card-body">
             <h1 class="font-weight-bold" id="yt">{{ ctx['ytd'] }}</h1>
           </div>
         </div>
       </div>
-      <div class="col-sm-5">
+      <div class="col-sm-4">
         <div class="card text-center">
-          <h2 class="card-header text-white bg-primary">mtd expenditure ({{ ctx['month'] }})</h2>
+          <h3 class="card-header text-white bg-primary">mtd expenditure ({{ ctx['month'] }})</h3>
           <div class="card-body">
             <h1 class="font-weight-bold" id="mt">{{ ctx['mtd'] }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="card text-center">
+          <h3 class="card-header text-white bg-primary">Transaction count</h3>
+          <div class="card-body">
+            <h1 class="font-weight-bold">{{ ctx['txn-count'] }}</h1>
           </div>
         </div>
       </div>
@@ -37,11 +45,19 @@
     {% else %}
     {% set year_total = ctx['year-total'] %}
     <div class="row mt-3">
-      <div class="col-sm-5">
+      <div class="col-sm-5 offset-sm-1">
         <div class="card text-center">
-          <h2 class="card-header text-white bg-primary">Total expenditure in {{ ctx['year'] }}</h2>
+          <h3 class="card-header text-white bg-primary">Total expenditure in {{ ctx['year'] }}</h3>
           <div class="card-body">
             <h1 class="font-weight-bold" id="yt">{{ ctx['year-total'] }}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="card text-center">
+          <h3 class="card-header text-white bg-primary">Transaction count</h3>
+          <div class="card-body">
+            <h1 class="font-weight-bold">{{ ctx['txn-count'] }}</h1>
           </div>
         </div>
       </div>

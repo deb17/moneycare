@@ -7,12 +7,13 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'data.db')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
     SECRET_KEY = os.getenv('SECRET_KEY') or 'topsecretkey'
     DEFAULT_COUNTRY_CODE = 'US'
     DEFAULT_CURRENCY = 'USD'
     DEFAULT_LOCALE = 'en-US'
     ITEMS_PER_PAGE = 10
+    SEARCH_ITEMS_PER_PAGE = 5
 
     GOOGLE_OAUTH_CLIENT_ID = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
     GOOGLE_OAUTH_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')

@@ -1,5 +1,5 @@
 {% extends 'expense/common.html' %}
 
 {% block buttons %}
-<a href="{{ url_for('expense.get_expense', id=id, page=page) }}" class="btn btn-warning">Cancel</a>
+<a href="{{ url_for('expense.get_expense', id=id, page=page, back=back) }}" class="btn btn-warning">Cancel</a>
 {% endblock %}

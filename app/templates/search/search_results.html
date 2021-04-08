@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+
+{% block styles %}
+{{ super() }}
+<style>
+  .chart {
+    background-color: #fff;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="py-4">Search results</h2>
+<h4>Total number of results found is {{ expenses.total }}{{ '. Ranked by relevance.' if whoosh }}</h4>
+{% if expenses.total > 0 %}
+<small>Click on a serial number to see details.</small>
+{% endif %}
+<div class="row">
+  <div class="col-sm-6">
+    {% for e in expenses.items %}
+      <div class="list-group mb-3">
+        <a href="{{ url_for('expense.get_expense', id=e.id, page=expenses.page, back='search.search_results') }}" class="list-group-item list-group-item-action list-group-item-info"># <b>{{ (expenses.page - 1) * expenses.per_page + loop.index }}</b></a>
+        <span class="list-group-item list-group-item-info"><b>Date: </b>{{ moment(e.date).format('MMM Do YYYY') }}</span>
+        <span class="list-group-item list-group-item-info"><b>Description:</b><br>{{ e.description }}</span>
+        <span class="list-group-item list-group-item-info"><b>Payment mode:</b><br>{{ e.payment_mode.mode }}</span>
+        <span class="list-group-item list-group-item-info"><b>Amount: </b>{{ e.amount | format_currency }}</span>
+      </div>
+    {% endfor %}
+    {% if expenses.total > 0 %}
+      {{ render_pagination(expenses, prev='prev', next='next') }}
+    {% endif %}
+  </div>
+  <div class="col-sm-6">
+    {% if expenses.total > 0 %}
+    <canvas id="pie-chart" class="chart" width="400" height="400"></canvas>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+
+{% if expenses.total > 0 %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-colorschemes"></script>
+<script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+<script>
+  var page_expenses = [{% for exp in expenses.items %} {{ exp.amount }}, {% endfor %}]
+  var page_exp_desc = [{% for exp in expenses.items %} '{{ exp.description }}', {% endfor %}]
+  var total = {{ total }}
+  var page_total = page_expenses.reduce((a, b) => a + b, 0)
+  var rest = total - page_total
+  page_expenses.push(rest)
+  page_exp_desc.push('Rest')
+</script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+
+{% endif %}
+{% endblock %}

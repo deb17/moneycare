@@ -60,10 +60,11 @@ def list_expenses(page=1):
 def get_expense(id):
 
     page = request.args.get('page', 1)
+    back = request.args.get('back')
     expense = Expense.query.get_or_404(id)
 
     return render_template('expense/expense.html', exp=expense,
-                           title='Expense', page=page)
+                           title='Expense', page=page, back=back)
 
 
 @bp.route('/delete/<int:id>')
@@ -71,13 +72,14 @@ def get_expense(id):
 def delete_expense(id):
 
     exp = Expense.query.get(id)
+    back = request.args.get('back')
     if exp.user_id != current_user.id:
         abort(403)
     db.session.delete(exp)
     db.session.commit()
     flash('The expense was deleted.', 'success')
 
-    return redirect(url_for('expense.list_expenses'))
+    return redirect(url_for(back))
 
 
 @bp.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -85,6 +87,7 @@ def delete_expense(id):
 def edit_expense(id):
 
     page = request.args.get('page', 1)
+    back = request.args.get('back')
     exp = Expense.query.get(id)
 
     if current_user.id != exp.user_id:
@@ -102,7 +105,9 @@ def edit_expense(id):
         exp.tags = []
         exp.set_tags(form.taglist.data)
         db.session.commit()
-        return redirect(url_for('expense.get_expense', id=id, page=page))
+        return redirect(url_for('expense.get_expense', id=id, page=page,
+                                back=back))
 
     return render_template('expense/edit.html', title='Edit expense',
-                           form=form, heading='Edit expense', id=id, page=page)
+                           form=form, heading='Edit expense', id=id,
+                           page=page, back=back)

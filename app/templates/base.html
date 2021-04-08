@@ -5,36 +5,11 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <link rel="icon" href="{{ url_for('static', filename='images/icons/favicon.svg') }}" />
     {% block styles %}
       <!-- Bootstrap CSS -->
       {{ bootstrap.load_css() }}
-      <style>
-        body {
-          background-color: #f5fafe;
-        }
-        .navbar {
-          background-color: #a0d3f8;
-        }
-        .mt-6 {
-          margin-top: 4rem;
-        }
-        label {
-          font-weight: bold;
-        }
-        legend {
-          font-weight: bold;
-        }
-        .navbar-nav-scroll {
-          max-height: 75vh;
-          overflow-y: auto;
-        }
-        @media (min-width: 992px) {
-          .navbar-expand-lg .navbar-nav-scroll {
-            overflow: visible;
-          }
-        }
-      </style>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% endblock %}
 
     <title>MoneyCare - {{ title }}</title>

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_field %}
+
+{% block content %}
+<h2 class="py-4 text-center font-weight-bold">Search</h2>
+<h3>Fill out one or more fields.</h3>
+<form method="post" novalidate>
+  {{ form.csrf_token() }}
+  <div class="row">
+    <div class="col-md-6">
+      {{ render_field(form.year)}}
+    </div>
+    <div class="col-md-6">
+      {{ render_field(form.month) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      {{ render_field(form.exact_date) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      {{ render_field(form.from_date)}}
+    </div>
+    <div class="col-md-6">
+      {{ render_field(form.to_date) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4"><b>Amount must be</b></div>
+    <div class="col-md-4">
+      {{ render_field(form.amt_cond, form_type='inline') }}
+    </div>
+    <div class="col-md-4">
+      {{ form.amount(class_='form-control ' + ('is-invalid' if form.amount.errors else '')) }}
+      {% for e in form.amount.errors %}
+      <div class="invalid-feedback">{{ e }}</div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4"><b>Amount is between</b></div>
+    <div class="col-md-4">
+      {{ form.amt_min(class_='form-control ' + ('is-invalid' if form.amt_min.errors else '')) }}
+      {% for e in form.amt_min.errors %}
+      <div class="invalid-feedback">{{ e }}</div>
+      {% endfor %}
+    </div>
+    <div class="col-md-4">
+      {{ form.amt_max(class_='form-control ' + ('is-invalid' if form.amt_max.errors else '')) }}
+      {% for e in form.amt_max.errors %}
+      <div class="invalid-feedback">{{ e }}</div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      {{ render_field(form.text) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      {{ render_field(form.payment_modes) }}
+    </div>
+    <div class="col-md-6">
+      {{ render_field(form.tags) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      {{ render_field(form.submit, button_size='lg') }}
+    </div>
+  </div>
+</form>
+{% endblock %}
