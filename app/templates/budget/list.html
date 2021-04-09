@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+
+{% block styles %}
+{{ super() }}
+<style>
+  .table {
+    background-color: #f5f5f5;
+  }
+  .table-bordered,
+  .table-bordered td,
+  .table-bordered th {
+    border: 1px solid #999;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 class="py-4">List of estimates and actual values in the current year</h2>
+<div class="d-none d-md-block">
+  <small>Click on a serial number to see details.</small>
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Description</th>
+        <th scope="col">Estimate</th>
+        <th scope="col">Actual value</th>
+        <th scope="col">Status</th>
+        <th scope="col">Active</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in entries.items %}
+      <tr>
+        <th scope="row"><a href="{{ url_for('budget.get_entry', id=e.id, page=entries.page) }}">{{ (entries.page - 1) * entries.per_page + loop.index }}</a></th>
+        <td class="{{ 'table-info' if e.active else 'table-secondary' }}">{{ e.item }}</td>
+        <td class="{{ 'table-info' if e.active else 'table-secondary' }}">{{ e.estimate | format_currency }}</td>
+        {% if not e.active %}
+        <td class="table-secondary"></td>
+        <td class="table-secondary"></td>
+        {% else %}
+        <td class="{{ 'table-info' if e.active else 'table-secondary' }}">{{ totals.get(e.item, 0) | format_currency }}</td>
+
+        {% if e.estimate > totals.get(e.item, 0) %}
+          {% set class, text = 'table-warning', 'Under' %}
+        {% elif e.estimate < totals.get(e.item, 0) %}
+          {% set class, text = 'table-danger', 'Over' %}
+        {% else %}
+          {% set class, text = 'table-success', 'Target met' %}
+        {% endif %}
+
+        <td class="{{ class }}">{{ text }}</td>
+        {% endif %}
+        <td class="{{ 'table-info' if e.active else 'table-secondary' }}">{{ 'Yes' if e.active else 'No' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="d-block d-md-none">
+  {% if entries.total == 0 %}
+  <h3>No estimates have been set.</h3>
+  {% else %}
+  <small>Click on a serial number to see details.</small>
+  {% endif %}
+  {% for e in entries.items %}
+  <div class="list-group mb-3">
+    <a href="{{ url_for('budget.get_entry', id=e.id, page=entries.page) }}" class="list-group-item list-group-item-action {{ 'list-group-item-info' if e.active else 'list-group-item-secondary' }}"># <b>{{ (entries.page - 1) * entries.per_page + loop.index }}</b></a>
+    <span class="list-group-item {{ 'list-group-item-info' if e.active else 'list-group-item-secondary' }}"><b>Description:</b><br>{{ e.item }}</span>
+    <span class="list-group-item {{ 'list-group-item-info' if e.active else 'list-group-item-secondary' }}"><b>Estimate:</b> {{ e.estimate | format_currency }}</span>
+
+    {% if  not e.active %}
+      <span class="list-group-item list-group-item-secondary"><b>Actual:</b></span>
+      <span class="list-group-item list-group-item-secondary"><b>Status:</b></span>
+    {% else %}
+      <span class="list-group-item {{ 'list-group-item-info' if e.active else 'list-group-item-secondary' }}"><b>Actual: </b>{{ totals.get(e.item, 0) | format_currency }}</span>
+      
+      {% if e.estimate > totals.get(e.item, 0) %}
+        {% set class, text = 'list-group-item-warning', 'Under' %}
+      {% elif e.estimate < totals.get(e.item, 0) %}
+        {% set class, text = 'list-group-item-danger', 'Over' %}
+      {% else %}
+        {% set class, text = 'list-group-item-success', 'Target met' %}
+      {% endif %}
+
+      <span class="list-group-item {{ class }}"><b>Status: </b> {{ text }}</span>
+    {% endif %}
+    <span class="list-group-item {{ 'list-group-item-info' if e.active else 'list-group-item-secondary' }}"><b>Active: </b>{{ 'Yes' if e.active else 'No' }}</span>
+  </div>
+  {% endfor %}
+</div>
+{{ render_pagination(entries, prev='prev', next='next') }}
+{% endblock %}

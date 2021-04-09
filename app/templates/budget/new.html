@@ -2,6 +2,10 @@
 {% from 'bootstrap/form.html' import render_form %}
 
 {% block content %}
-<h2 class="py-4">Make an estimate entry</h2>
-{{ render_form(form, novalidate=True) }}
-{% endif %}
+<div class="row">
+  <div class="col-sm-6 offset-sm-3">
+    <h2 class="py-4">Make an estimate entry</h2>
+    {{ render_form(form, novalidate=True) }}
+  </div>
+</div>
+{% endblock %}

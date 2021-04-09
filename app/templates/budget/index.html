@@ -5,5 +5,5 @@
 <h1 class="pt-5">Budget for the current year</h1>
 <h4>This section helps you create and manage estimates for planned expenses.</h4>
 <p class="lead mt-3">{{ render_icon('plus-circle-fill', size='1.5em', color='primary') }}<a href="{{ url_for('budget.new_entry') }}">Make a new entry</a></p>
-<p class="lead">{{ render_icon('card-list', size='1.5em', color='primary') }}<a href="{{ url_for('budget.list_entries') }}">List of estimates and actual expenditures.</a></p>
+<p class="lead">{{ render_icon('card-list', size='1.5em', color='primary') }}<a href="{{ url_for('budget.list_entries') }}">List estimates and actual expenditures.</a></p>
 {% endblock %}
