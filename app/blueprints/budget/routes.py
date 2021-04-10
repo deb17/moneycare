@@ -40,30 +40,45 @@ def new_entry():
 @bp.route('/list/<int:page>')
 @login_required
 def list_entries(page=1):
+    '''Aggregate expenses for each budget entry by either -
+    1. Matching descriptions case insensitively (the user may have
+       forgotten to select an estimate while creating the expense).
+    2. Finding expenses by foreign key
+    '''
 
     curr_year = datetime.utcnow().year
 
-    items = db.session.query(Budget, Expense) \
-        .select_from(Budget) \
-        .join(
-            Expense,
-            db.and_(
-                Expense.user_id == Budget.user_id,
-                db.func.lower(Budget.item) == db.func.lower(
-                    Expense.description)
-            )
-    ) \
+    E = Expense
+
+    expense_subq = db.session.query(E.description, E.amount_str) \
         .filter(
-            Budget.user_id == current_user.id,
-            db.extract('year', Expense.date) == curr_year
+            E.user_id == current_user.id,
+            db.extract('year', E.date) == curr_year,
+            E.budget_id.is_(None)
+    ).subquery()
+
+    budget_subq = db.session.query(Budget.item).filter(
+        Budget.user_id == current_user.id
+    ).subquery()
+
+    q = db.session.query(budget_subq, expense_subq) \
+        .select_from(budget_subq) \
+        .join(
+            expense_subq,
+            (db.func.lower(budget_subq.c.item) ==
+                db.func.lower(expense_subq.c.description))
     )
     actual_totals = defaultdict(int)
-    for i in items:
-        actual_totals[i[0].item] += i[1].amount
+    for item, _, amount_str in q:
+        actual_totals[item] += E.amount_num(amount_str)
 
     budget_entries = Budget.query \
         .filter(Budget.user_id == current_user.id) \
         .paginate(page, current_app.config['ITEMS_PER_PAGE'], False)
+
+    for entry in budget_entries.items:
+        for exp in entry.expenses:
+            actual_totals[entry.item] += exp.amount
 
     return render_template('budget/list.html', title='List estimates',
                            totals=actual_totals, entries=budget_entries)

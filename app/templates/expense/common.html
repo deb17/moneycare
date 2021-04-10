@@ -14,7 +14,14 @@
     <div class="col-sm-4">
       {{ form.csrf_token() }}
       {{ render_field(form.description) }}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
       {{ render_field(form.date) }}
+    </div>
+    <div class="col-sm-4">
+      {{ render_field(form.estimate_entry) }}
     </div>
   </div>
   <div class="row">

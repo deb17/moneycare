@@ -8,8 +8,8 @@ class BudgetForm(FlaskForm):
 
     item = StringField('Brief description', validators=[DataRequired()])
     estimate = IntegerField('Estimated year total')
-    due = StringField('Frequency or due date (optional)',
+    due = StringField('Frequency or due date',
                       render_kw={'placeholder': 'When is the expense due?'})
-    comments = TextAreaField('Comments (optional)')
+    comments = TextAreaField('Comments')
     active = BooleanField('Active', default="checked")
     submit = SubmitField('Create')

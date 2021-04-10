@@ -8,6 +8,7 @@
 <p><b>Description: </b><br class="d-inline d-sm-none"><span>{{ exp.description }}</span></p>
 <p><b>Amount: </b><br class="d-inline d-sm-none">{{ exp.amount | format_currency }}</p>
 <p><b>Payment mode: </b><br class="d-inline d-sm-none">{{ exp.payment_mode.mode }}</p>
+<p><b>Related estimate: </b><br class="d-inline d-sm-none">{{ exp.estimate.item if exp.estimate else '-'  }}</p>
 <p><b>Comments: </b><br class="d-inline d-sm-none">{% if exp.comments %}<span class="d-inline-block">{{ exp.comments | safe }}</span>{% else %}None{% endif %}</p>
 <p><b>Tags: </b><br class="d-inline d-sm-none">
 {% if exp.tags %}

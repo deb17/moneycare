@@ -23,9 +23,10 @@ class ExpenseForm(FlaskForm):
         render_kw={'autocomplete': 'off'}
     )
     pay_mode = SelectField('Payment mode', validators=[DataRequired()])
-    comments = TextAreaField('Comments (if any)', validators=[Length(max=512)])
+    estimate_entry = SelectField('Related estimate')
+    comments = TextAreaField('Comments', validators=[Length(max=512)])
     taglist = StringField(
-        'Add tags (optional)',
+        'Add tags',
         render_kw={'class': 'tagsinput'}
     )
     submit = SubmitField('Save')

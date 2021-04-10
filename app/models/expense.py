@@ -49,10 +49,11 @@ class Expense(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    description = db.Column(db.String(64), nullable=False, index=True)
+    description = db.Column(db.String(64), nullable=False)
     amount_str = db.Column(db.String(12), nullable=False)
     date = db.Column(db.Date, index=True)
     mode_id = db.Column(db.Integer, db.ForeignKey('modes.id'))
+    budget_id = db.Column(db.Integer, db.ForeignKey('budget.id'))
     comments = db.Column(db.String(512))
     tags = db.relationship(
         'Tag',
@@ -83,6 +84,14 @@ class Expense(db.Model):
 
         value = round(Decimal(value), 2)
         self.amount_str = str(value)
+
+    @classmethod
+    def amount_num(cls, amount_str):
+
+        if current_user.allow_decimals:
+            return Decimal(amount_str)
+
+        return round(Decimal(amount_str), 0)
 
     def set_tags(self, taglist):
 
