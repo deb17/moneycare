@@ -16,8 +16,9 @@
 {% endblock %}
 
 {% block content %}
-<h2 class="py-4">List of expenses in {{ year }}</h2>
-{% set back = 'expense.list_expenses' %}
+<a href="{{ url_for('budget.get_entry', id=budget_id, page=budget_page) }}" class="btn btn-secondary">Back</a>
+<h2 class="my-3">List of all related expenses</h2>
+{% set back = 'budget.related_expenses' %}
 {% include 'fragments/list.html' %}
 {% endblock %}
 

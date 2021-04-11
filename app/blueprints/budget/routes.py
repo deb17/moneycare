@@ -95,6 +95,52 @@ def get_entry(id):
                            entry=entry, page=page)
 
 
+@bp.route('/entry/related-expenses/<int:page>')
+@login_required
+def related_expenses(page):
+
+    budget_id = request.args.get('budget_id', type=int)
+    budget_page = request.args.get('budget_page', type=int)
+
+    curr_year = datetime.utcnow().year
+
+    E = Expense
+
+    expense_subq = db.session.query(
+        E.id,
+        E.date,
+        E.description,
+        E.budget_id
+    ) \
+        .filter(
+            E.user_id == current_user.id,
+            db.extract('year', E.date) == curr_year
+    ).subquery()
+
+    budget_subq = db.session.query(Budget).filter(
+        Budget.user_id == current_user.id
+    ).subquery()
+
+    expenses = db.session.query(expense_subq) \
+        .select_from(budget_subq) \
+        .join(
+            expense_subq,
+            db.or_((db.func.lower(budget_subq.c.item) ==
+                    db.func.lower(expense_subq.c.description)),
+                   budget_subq.c.id == expense_subq.c.budget_id)
+    ) \
+        .order_by(expense_subq.c.date.desc()) \
+        .paginate(page, current_app.config['ITEMS_PER_PAGE'], False)
+
+    page_ids = [item.id for item in expenses.items]
+    expenses.items = E.query.filter(E.id.in_(page_ids)) \
+        .order_by(E.date.desc()).all()
+
+    return render_template('budget/expenses.html', title='Related expenses',
+                           budget_id=budget_id, budget_page=budget_page,
+                           expenses=expenses)
+
+
 @bp.route('/entry/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_entry(id):

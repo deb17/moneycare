@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% from 'bootstrap/form.html' import render_form %}
 
 {% block styles %}
 {{ super() }}
@@ -12,12 +11,18 @@
 
 {% block content %}
   <h1 class="text-center">Dashboard</h1>
-  {{ render_form(form, form_type='inline', novalidate=True, button_style='success') }}
+  <form method="post" class="form-inline" novalidate>
+    {{ form.csrf_token() }}
+    <div class="form-group mb-2 mr-2">
+      {{ form.year(class_='form-control' + (' is-invalid' if form.year.errors else '')) }}
+    </div>
+    {{ form.submit(class_='btn btn-success mb-2') }}
+  </form>
   {% if ctx %}
     {% if 'ytd' in ctx %}
     {% set year_total = ctx['ytd'] %}
     <div class="row mt-3">
-      <div class="col-sm-4">
+      <div class="col-md-4 mb-2">
         <div class="card text-center">
           <h3 class="card-header text-white bg-primary">ytd expenditure ({{ ctx['year'] }})</h3>
           <div class="card-body">
@@ -25,7 +30,7 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-4">
+      <div class="col-md-4 mb-2">
         <div class="card text-center">
           <h3 class="card-header text-white bg-primary">mtd expenditure ({{ ctx['month'] }})</h3>
           <div class="card-body">
@@ -33,7 +38,7 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-4">
+      <div class="col-md-4 mb-2">
         <div class="card text-center">
           <h3 class="card-header text-white bg-primary">Transaction count</h3>
           <div class="card-body">
@@ -45,7 +50,7 @@
     {% else %}
     {% set year_total = ctx['year-total'] %}
     <div class="row mt-3">
-      <div class="col-sm-5 offset-sm-1">
+      <div class="col-md-5 offset-md-1 mb-2">
         <div class="card text-center">
           <h3 class="card-header text-white bg-primary">Total expenditure in {{ ctx['year'] }}</h3>
           <div class="card-body">
@@ -53,7 +58,7 @@
           </div>
         </div>
       </div>
-      <div class="col-sm-5">
+      <div class="col-md-5 mb-2">
         <div class="card text-center">
           <h3 class="card-header text-white bg-primary">Transaction count</h3>
           <div class="card-body">
@@ -66,29 +71,29 @@
     {% if year_total > 0 %}
     <h2 class="mt-3 mb-4">Charts for year {{ ctx['year'] }} -</h2>  
     <div class="row">
-      <div class="col-sm-6">
+      <div class="col-md-6">
         <h3 class="text-center">Monthly totals</h3>
         <canvas id="bar-chart" class="chart" width="400" height="400"></canvas>
       </div>
-      <div class="col-sm-6">
+      <div class="col-md-6">
         <h3 class="text-center">Monthly totals</h3>
         <canvas id="line-chart" class="chart" width="400" height="400"></canvas>
       </div>
     </div>
     <div class="row mt-4">
-      <div class="col-sm-6 offset-sm-3">
+      <div class="col-md-6 offset-md-3">
         <h3 class="text-center">{{ ctx['month'] + ' expenses ' }}({{ ctx['month-total'] | format_currency }})</h3>
         <canvas id="pie-chart-1" class="chart" width="400" height="400"></canvas>
       </div>
     </div>
     <div class="row mt-4">
-      <div class="col-sm-6 offset-sm-3">
+      <div class="col-md-6 offset-md-3">
         <h3 class="text-center">Scatter plot of outliers</h3>
         <canvas id="scatter-chart" class="chart" width="400" height="400"></canvas>
       </div>
     </div>
     <div class="row mt-4">
-      <div class="col-sm-6 offset-sm-3">
+      <div class="col-md-6 offset-md-3">
         <h3 class="text-center mb-0">Expenses by payment mode</h3>
         <h4 class="text-center">(for the year)</h4>
         <canvas id="pie-chart-2" class="chart" width="400" height="400"></canvas>

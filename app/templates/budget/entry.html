@@ -7,6 +7,8 @@
 <p><b>When due: </b><br class="d-inline d-sm-none">{{ entry.due or '-' }}</p>
 <p><b>Comments: </b><br class="d-inline d-sm-none">{% if entry.comments %}<span class="d-inline-block">{{ entry.comments | safe }}</span>{% else %}None{% endif %}</p>
 <p><b>Active: </b>{{ 'Yes' if entry.active else 'No' }}</p>
+
+<a href="{{ url_for('budget.related_expenses', budget_id=entry.id, budget_page=page, page=1) }}" class="btn btn-info">Expenses</a>
 <a href="{{ url_for('budget.edit_entry', id=entry.id, page=page) }}" class="btn btn-primary">Edit</a>
 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">Delete</button>
 <a href="{{ url_for('budget.list_entries', page=page) }}" class="btn btn-secondary">Back</a>
@@ -14,5 +16,5 @@
 {% set msg = 'Do you want to delete this budget item?' %}
 {% set endpoint = 'budget.delete_entry' %}
 {% set kwargs = { 'id': entry.id } %}
-{% include 'deleteModal.html' %}
+{% include 'fragments/deleteModal.html' %}
 {% endblock %}

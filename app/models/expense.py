@@ -87,7 +87,10 @@ class Expense(db.Model):
 
     @classmethod
     def amount_num(cls, amount_str):
-
+        '''Needed because we cannot use the hybrid expression to get a
+        numeric field in a query in sqlite. Rather we select `amount_str`
+        and use this method to convert it to a decimal number.
+        '''
         if current_user.allow_decimals:
             return Decimal(amount_str)
 
