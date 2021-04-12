@@ -2,7 +2,7 @@ body {
   background-color: #f5fafe;
 }
 .jumbotron {
-  background: url(/static/images/money.jpg) center / cover no-repeat fixed;
+  background: url(/static/images/money-small.jpg) center / cover no-repeat fixed;
   height: 75vh;
   margin-bottom: 0;
 }
@@ -15,4 +15,12 @@ body {
 #signin-btn {
   padding: 5px;
   display: inline-block;
+}
+.hidden {
+  opacity: 0;
+}
+@media (min-width: 576px) {
+  .jumbotron {
+    background: url(/static/images/money.jpg) center / cover no-repeat fixed;
+  }  
 }

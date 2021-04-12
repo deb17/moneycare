@@ -27,6 +27,18 @@ def home():
     return render_template('main/home.html', title='Home')
 
 
+@bp.route('/privacy-policy')
+def privacy_policy():
+
+    return render_template('main/privacy_policy.html')
+
+
+@bp.route('/terms-and-conditions')
+def terms_and_conditions():
+
+    return render_template('main/tac.html')
+
+
 @bp.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():

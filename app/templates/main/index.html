@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     {{ bootstrap.load_css() }}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <title>MoneyCare</title>
   </head>
   <body>
@@ -15,10 +16,23 @@
     <div class="jumbotron jumbotron-fluid">
       <div class="container text-center">
         <h1 class="display-4"><span>MoneyCare</span></h1>
-        <p class="lead"><span>A comprehensive expense tracker. See below for features.</span></p>
+        <p class="lead"><span><b>A comprehensive expense tracker. See below for features.</b></span></p>
         <span id="signin-btn" class="mt-5"><a href="{{ url_for('auth.login' )}}" class="btn btn-dark btn-lg">Sign in</a></span>
       </div>
     </div>
-    <span class="float-right">Photo by <a href="https://unsplash.com/@giorgiotrovato?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"> Giorgio Trovato</a> on <a href="https://unsplash.com/s/photos/money?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"> Unsplash</a></span>
+    <div class="clearfix">
+      <span class="float-right">Photo by <a href="https://unsplash.com/@giorgiotrovato?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"> Giorgio Trovato</a> on <a href="https://unsplash.com/s/photos/money?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"> Unsplash</a></span>
+    </div>
+    <div class="container">
+      <div class="row hidden">
+        <div class="col-md-6 d-flex"><h3 class="align-self-center">View your expenditure summary in a dashboard of charts.</h3></div>
+        <div class="col-md-6"><img src="https://via.placeholder.com/400" alt="dashboard"></div>
+      </div>
+      <div class="row hidden">
+        <div class="col-md-6"><img src="https://via.placeholder.com/400" alt="Manage"></div>
+        <div class="col-md-6 d-flex"><h3 class="align-self-center">Manage your expenses easily with intuitive forms and listings.</h3></div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
   </body>
 </html>

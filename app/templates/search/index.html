@@ -32,7 +32,7 @@
     <div class="col-md-4">
       {{ render_field(form.amt_cond, form_type='inline') }}
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 mb-3 mb-sm-0">
       {{ form.amount(class_='form-control ' + ('is-invalid' if form.amount.errors else '')) }}
       {% for e in form.amount.errors %}
       <div class="invalid-feedback">{{ e }}</div>
@@ -41,13 +41,13 @@
   </div>
   <div class="row">
     <div class="col-md-4"><b>Amount is between</b></div>
-    <div class="col-md-4">
+    <div class="col-md-4 mb-2 mb-sm-0">
       {{ form.amt_min(class_='form-control ' + ('is-invalid' if form.amt_min.errors else '')) }}
       {% for e in form.amt_min.errors %}
       <div class="invalid-feedback">{{ e }}</div>
       {% endfor %}
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 mb-3">
       {{ form.amt_max(class_='form-control ' + ('is-invalid' if form.amt_max.errors else '')) }}
       {% for e in form.amt_max.errors %}
       <div class="invalid-feedback">{{ e }}</div>

@@ -25,6 +25,8 @@ def walk(path='.'):
             if file.endswith('.py'):
                 loc += file_len(filepath, '#')
             elif file.endswith('.html'):
+                if file in ('privacy_policy.html', 'tac.html'):
+                    continue
                 loc += file_len(filepath, '<!--')
             elif file.endswith('.css'):
                 if file == 'jquery.tagsinput-revisited.css':
