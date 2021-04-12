@@ -2,7 +2,8 @@ body {
   background-color: #f5fafe;
 }
 .navbar {
-  background-color: #a0d3f8;
+  background-color: #b8defa;
+  padding: 0 1rem;
 }
 .mt-6 {
   margin-top: 4rem;
@@ -12,6 +13,16 @@ label {
 }
 legend {
   font-weight: bold;
+}
+.navbar .active {
+  background-color: #88c8f7;
+  font-weight: bold;
+}
+.navbar-brand {
+  font-size: 1.8rem;
+}
+.navbar-nav {
+  font-size: 1.2rem;
 }
 .navbar-nav-scroll {
   max-height: 75vh;
