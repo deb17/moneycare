@@ -28,9 +28,3 @@ class Config:
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
     FLASK_ADMIN_SWATCH = 'cerulean'
-
-
-class TestingConfig(Config):
-
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    WHOOSH_INDEX_PATH = '.indexes-test'
