@@ -20,10 +20,10 @@ from app.blueprints.budget import bp as budget_bp
 from app.blueprints.admin import admin_create_module
 
 
-def create_app():
+def create_app(config=Config):
 
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(config)
 
     admin_create_module(app)
     register_extensions(app)
