@@ -1,8 +1,9 @@
 body {
   background-color: #f5fafe;
+  overflow-x: hidden;
 }
 .jumbotron {
-  background: url(/static/images/money-small.jpg) center / cover no-repeat fixed;
+  background: url(/static/images/money-small.jpg) center / cover no-repeat scroll;
   height: 75vh;
   margin-bottom: 0;
 }
