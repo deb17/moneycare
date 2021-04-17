@@ -78,7 +78,8 @@ def list_entries(page=1):
 
     for entry in budget_entries.items:
         for exp in entry.expenses:
-            actual_totals[entry.item] += exp.amount
+            if exp.date.year == curr_year:
+                actual_totals[entry.item] += exp.amount
 
     return render_template('budget/list.html', title='List estimates',
                            totals=actual_totals, entries=budget_entries)
