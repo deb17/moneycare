@@ -53,7 +53,7 @@ def search_results():
     form = SearchForm(data=form_data)
 
     expenses, total = search_main(form, page)
-    if form.text.data:
+    if form.text.data and not form.simple_search.data:
         whoosh = True
     else:
         whoosh = False

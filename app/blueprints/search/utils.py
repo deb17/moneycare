@@ -139,26 +139,39 @@ def filter_tags(form):
     return q9
 
 
+def escape(s):
+
+    return s.replace('/', '//').replace('%', '/%').replace('_', '/_')
+
+
 def filter_description(form):
 
     q9 = filter_tags(form)
 
     if form.text.data:
-        exp_objects = q9.search(form.text.data, limit=50).all()
-        # Following code is needed because the search method does not
-        # support pagination. Also the whoosh results order needs to be
-        # preserved.
-        exp_ids = []
-        for exp in exp_objects:
-            exp_ids.append(exp.id)
-        if exp_ids:
-            ordering = case(
-                {id: index for index, id in enumerate(exp_ids)},
-                value=Expense.id
-            )
+        if form.simple_search.data:
+            search_for = '%' + escape(form.text.data) + '%'
+            q10 = q9.filter(db.or_(
+                Expense.description.ilike(search_for, escape='/'),
+                Expense.comments.ilike(search_for, escape='/')
+            )).order_by(Expense.date.desc())
         else:
-            ordering = None
-        q10 = Expense.query.filter(Expense.id.in_(exp_ids)).order_by(ordering)
+            exp_objects = q9.search(form.text.data, limit=50).all()
+            # Following code is needed because the search method does not
+            # support pagination. Also the whoosh results order needs to be
+            # preserved.
+            exp_ids = []
+            for exp in exp_objects:
+                exp_ids.append(exp.id)
+            if exp_ids:
+                ordering = case(
+                    {id: index for index, id in enumerate(exp_ids)},
+                    value=Expense.id
+                )
+            else:
+                ordering = None
+            q10 = Expense.query.filter(Expense.id.in_(exp_ids)) \
+                .order_by(ordering)
     else:
         q10 = q9.order_by(Expense.date.desc())
 

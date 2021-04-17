@@ -2,7 +2,7 @@ from calendar import month_abbr
 
 from flask_wtf import FlaskForm
 from wtforms import (StringField, DateField, SelectField, SelectMultipleField,
-                     DecimalField, SubmitField)
+                     DecimalField, BooleanField, SubmitField)
 from wtforms.validators import Length, Optional, ValidationError
 from wtforms.widgets import Select, html_params, HTMLString
 
@@ -68,6 +68,7 @@ class SearchForm(FlaskForm):
     amt_max = DecimalField(validators=[Optional()],
                            render_kw={'placeholder': 'Max value'})
     text = StringField('Description or comments contains')
+    simple_search = BooleanField('Search as a string of characters')
     payment_modes = CustomMultiSelect('Payment modes', coerce=int)
     tags = CustomMultiSelect('Tags', coerce=int)
     submit = SubmitField('Search')
