@@ -70,7 +70,7 @@
   {% endif %}
   {% for e in entries.items %}
   <div class="list-group mb-3">
-    <a href="{{ url_for('budget.get_entry', id=e.id, page=entries.page) }}" class="list-group-item list-group-item-action {{ 'list-group-item-info' if e.active else 'list-group-item-secondary' }}"># <b>{{ (entries.page - 1) * entries.per_page + loop.index }}</b></a>
+    <a href="{{ url_for('budget.get_entry', id=e.id, page=entries.page) }}" class="list-group-item list-group-item-action {{ 'list-group-item-primary' if e.active else 'list-group-item-dark' }}"># <b>{{ (entries.page - 1) * entries.per_page + loop.index }}</b></a>
     <span class="list-group-item {{ 'list-group-item-info' if e.active else 'list-group-item-secondary' }}"><b>Description:</b><br>{{ e.item }}</span>
     <span class="list-group-item {{ 'list-group-item-info' if e.active else 'list-group-item-secondary' }}"><b>Estimate:</b> {{ e.estimate | format_currency }}</span>
 
