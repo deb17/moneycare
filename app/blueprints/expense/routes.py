@@ -79,7 +79,7 @@ def get_expense(id):
 @login_required
 def delete_expense(id):
 
-    args = request.args
+    args = dict(request.args)
     back = args.pop('back')
     exp = Expense.query.get(id)
     if exp.user_id != current_user.id:

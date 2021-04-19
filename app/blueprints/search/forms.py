@@ -37,7 +37,7 @@ class CustomMultiSelect(SelectMultipleField):
 
 class SearchForm(FlaskForm):
     year = StringField('Year',
-                       validators=[Length(min=4, max=4)],
+                       validators=[Optional(False), Length(min=4, max=4)],
                        render_kw={'placeholder': 'yyyy'})
 
     month = CustomMultiSelect(

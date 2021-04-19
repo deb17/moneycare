@@ -32,5 +32,8 @@ class Config:
 
 class TestingConfig(Config):
 
+    TESTING = True
+    WTF_CSRF_ENABLED = False
+    SERVER_NAME = 'localhost:5000'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    WHOOSH_INDEX_PATH = '.indexes-test'
+    WHOOSH_INDEX_PATH = os.path.join(basedir, 'tests', '.indexes-test')
