@@ -18,9 +18,12 @@ class CustomModelView(ModelView):
 class ExpenseView(CustomModelView):
 
     column_searchable_list = ('description', 'comments')
-    column_filters = ('date',)
+    column_filters = ('date', 'user_id')
 
 
 class UserView(CustomModelView):
 
     form_excluded_columns = ('expenses',)
+    column_exclude_list = ('password_hash',)
+    column_searchable_list = ('uname',)
+    column_display_pk = True
