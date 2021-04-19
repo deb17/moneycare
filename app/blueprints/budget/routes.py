@@ -130,6 +130,7 @@ def related_expenses(page):
                     db.func.lower(expense_subq.c.description)),
                    budget_subq.c.id == expense_subq.c.budget_id)
     ) \
+        .filter(budget_subq.c.id == budget_id) \
         .order_by(expense_subq.c.date.desc()) \
         .paginate(page, current_app.config['ITEMS_PER_PAGE'], False)
 
