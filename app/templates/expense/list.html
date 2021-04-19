@@ -18,6 +18,7 @@
 {% block content %}
 <h2 class="py-4">List of expenses in {{ year }}</h2>
 {% set back = 'expense.list_expenses' %}
+{% set no_data_msg = 'No data.' %}
 {% include 'fragments/list.html' %}
 {% endblock %}
 

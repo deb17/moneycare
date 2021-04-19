@@ -18,7 +18,11 @@
 {% block content %}
 <a href="{{ url_for('budget.get_entry', id=budget_id, page=budget_page) }}" class="btn btn-secondary">Back</a>
 <h2 class="my-3">List of all related expenses</h2>
+{% if expenses.total > 0 %}
+  <h5>Total number of transactions is {{ expenses.total }}</h5>
+{% endif %}
 {% set back = 'budget.related_expenses' %}
+{% set no_data_msg = 'Nothing found.' %}
 {% include 'fragments/list.html' %}
 {% endblock %}
 
