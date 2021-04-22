@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -28,6 +29,17 @@ class Config:
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
     FLASK_ADMIN_SWATCH = 'cerulean'
+
+    API_TITLE = 'MoneyCare API'
+    API_VERSION = 'v1'
+    OPENAPI_VERSION = '3.0.2'
+    OPENAPI_URL_PREFIX = '/api/docs'
+    OPENAPI_SWAGGER_UI_PATH = '/'
+    OPENAPI_SWAGGER_UI_URL = (
+        'https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.47.1/'
+    )
+
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
 
 
 class TestingConfig(Config):

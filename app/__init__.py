@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask_login import current_user
 from config import Config
 from app.extensions import (
@@ -8,7 +8,9 @@ from app.extensions import (
     login_manager,
     bootstrap,
     moment,
-    mail
+    mail,
+    api,
+    jwt
 )
 from app.blueprints.main import bp as main_bp
 from app.blueprints.settings import bp as settings_bp
@@ -18,6 +20,10 @@ from app.blueprints.expense import bp as expense_bp
 from app.blueprints.search import bp as search_bp
 from app.blueprints.budget import bp as budget_bp
 from app.blueprints.admin import admin_create_module
+from app.blueprints.api import (
+    api_user_bp,
+    api_expense_bp
+)
 
 
 def create_app(config=Config):
@@ -39,6 +45,10 @@ def create_app(config=Config):
     app.register_blueprint(search_bp)
     app.register_blueprint(budget_bp)
 
+    setup_auth_for_api(api)
+    api.register_blueprint(api_user_bp)
+    api.register_blueprint(api_expense_bp)
+
     return app
 
 
@@ -51,6 +61,16 @@ def register_extensions(app):
     bootstrap.init_app(app)
     moment.init_app(app)
     mail.init_app(app)
+    api.init_app(app)
+    jwt.init_app(app)
+
+
+def setup_auth_for_api(api):
+
+    api.spec.components.security_scheme(
+        'bearerAuth',
+        {'type': 'http', 'scheme': 'bearer', 'bearerFormat': 'JWT'}
+    )
 
 
 def register_filters(app):
@@ -65,6 +85,11 @@ def register_errorhandlers(app):
 
     @app.errorhandler(404)
     def page_not_found(error):
+
+        if hasattr(error, 'data'):
+            response = jsonify(msg=error.data['message'])
+            response.status_code = 404
+            return response
         return render_template('errors/404.html'), 404
 
     @app.errorhandler(500)
@@ -73,4 +98,9 @@ def register_errorhandlers(app):
 
     @app.errorhandler(403)
     def forbidden(error):
+
+        if hasattr(error, 'data'):
+            response = jsonify(msg=error.data['message'])
+            response.status_code = 403
+            return response
         return render_template('errors/403.html'), 403
