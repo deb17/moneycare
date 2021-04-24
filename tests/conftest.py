@@ -81,6 +81,9 @@ def db_with_expenses(db):
     db.session.query(Expense).delete()
     db.session.commit()
 
+    # remove session else sqlalchemy warning may appear.
+    db.session.close()
+
 
 @pytest.fixture(scope='function')
 def db_with_books(db_with_expenses):
@@ -103,6 +106,7 @@ def db_with_books(db_with_expenses):
     book2.amount = 1500
     _db.session.add_all([book1, book2])
     _db.session.commit()
+    _db.session.close()
 
 
 @pytest.fixture(scope='function')
@@ -111,9 +115,9 @@ def db_with_expense_tags(db):
     db.session.query(Expense).delete()
     db.session.query(Tag).delete()
 
-    tag1 = Tag(tagname='tag1')
-    tag2 = Tag(tagname='tag2')
-    tag3 = Tag(tagname='tag3')
+    tag1 = Tag(tagname='tag1', user_id=1)
+    tag2 = Tag(tagname='tag2', user_id=1)
+    tag3 = Tag(tagname='tag3', user_id=1)
 
     for i in range(2):
         exp = Expense(
@@ -154,6 +158,7 @@ def db_with_expense_tags(db):
     db.session.query(Expense).delete()
     db.session.query(Tag).delete()
     db.session.commit()
+    db.session.close()
 
 
 @pytest.fixture(scope='function')
@@ -179,6 +184,7 @@ def db_with_expense_amounts(db):
 
     db.session.query(Expense).delete()
     db.session.commit()
+    db.session.close()
 
 
 @pytest.fixture(scope='function')
@@ -205,6 +211,7 @@ def db_with_months_data(db):
 
     db.session.query(Expense).delete()
     db.session.commit()
+    db.session.close()
 
 
 @pytest.fixture(scope='function')
@@ -261,6 +268,7 @@ def db_with_related_expenses(db):
     db.session.query(Expense).delete()
     db.session.query(Budget).delete()
     db.session.commit()
+    db.session.close()
 
 
 @pytest.fixture(scope='function')
@@ -289,19 +297,40 @@ def db_with_budget_expenses(db):
     db.session.query(Expense).delete()
     db.session.query(Budget).delete()
     db.session.commit()
+    db.session.close()
 
 
 @pytest.fixture(autouse=True, scope='function')
-def authenticate(db, client):
+def authenticate(db, client, request):
 
-    params = {
-        'identity': 'testuser1',
+    if 'nologin' in request.keywords:
+        yield
+    else:
+        params = {
+            'identity': 'testuser1',
+            'password': 'pass123'
+        }
+
+        client.post(url_for('auth.login'), data=params,
+                    follow_redirects=True)
+
+        yield
+
+        client.get(url_for('auth.logout'), follow_redirects=True)
+
+
+@pytest.fixture(scope='module')
+def token(app, db):
+
+    # not using client fixture because the token fixture is module
+    # scoped while the client fixture is function scoped
+    client = app.test_client()
+
+    login_data = {
+        'username': 'testuser1',
         'password': 'pass123'
     }
 
-    client.post(url_for('auth.login'), data=params,
-                follow_redirects=True)
-
-    yield
-
-    client.get(url_for('auth.logout'), follow_redirects=True)
+    resp = client.post('/api/login', json=login_data)
+    token = resp.get_json()['access_token']
+    return token
