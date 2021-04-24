@@ -46,7 +46,7 @@ def create_app(config=Config):
     app.register_blueprint(search_bp)
     app.register_blueprint(budget_bp)
 
-    setup_auth_for_api(api)
+    setup_for_api(api)
     api.register_blueprint(api_user_bp)
     api.register_blueprint(api_expense_bp)
     api.register_blueprint(api_search_bp)
@@ -67,7 +67,13 @@ def register_extensions(app):
     jwt.init_app(app)
 
 
-def setup_auth_for_api(api):
+def setup_for_api(api):
+
+    import warnings
+    warnings.filterwarnings(
+        "ignore",
+        message="Multiple schemas resolved to the name "
+    )
 
     api.spec.components.security_scheme(
         'bearerAuth',

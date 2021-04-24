@@ -36,15 +36,16 @@ def get_context(year):
         'payment-mode': get_expenses_by_payment_mode(exp_list)
     }
 
-    # Following set month-totals defaultdict with current month if it is not
-    # already present
-    ctx['month-total'] = ctx['month-totals'][curr_month_abbr]
+    if curr_month_abbr in ctx['month-totals']:
+        ctx['month-total'] = ctx['month-totals'][curr_month_abbr]
+    else:
+        ctx['month-total'] = 0
 
     ctx['num-of-months'] = len(ctx['month-totals'])
 
     if year == curr_year:
         ctx['ytd'] = sum(ctx['month-totals'].values())
-        ctx['mtd'] = list(ctx['month-totals'].values())[-1]
+        ctx['mtd'] = ctx['month-total']
     else:
         ctx['year-total'] = sum(ctx['month-totals'].values())
 
