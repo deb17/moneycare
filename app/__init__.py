@@ -22,7 +22,8 @@ from app.blueprints.budget import bp as budget_bp
 from app.blueprints.admin import admin_create_module
 from app.blueprints.api import (
     api_user_bp,
-    api_expense_bp
+    api_expense_bp,
+    api_search_bp
 )
 
 
@@ -48,6 +49,7 @@ def create_app(config=Config):
     setup_auth_for_api(api)
     api.register_blueprint(api_user_bp)
     api.register_blueprint(api_expense_bp)
+    api.register_blueprint(api_search_bp)
 
     return app
 

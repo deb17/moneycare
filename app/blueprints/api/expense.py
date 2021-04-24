@@ -11,7 +11,7 @@ from app.models import Expense, User
 from app.models import expense
 from .schemas.expense import ExpenseSchema, ExpenseUpdateSchema
 
-bp = Blueprint('api.expense', __name__, url_prefix='/api',
+bp = Blueprint('api-expense', __name__, url_prefix='/api',
                description='Expense routes')
 
 
@@ -92,7 +92,10 @@ class ExpenseResource(MethodView):
         exp = query.first()
         if exp:
             if exp.user_id == user_id:
+                amount = update_data.pop('amount', None)
                 query.update(update_data)
+                if amount:
+                    exp.amount = amount
                 db.session.commit()
                 return exp
             else:

@@ -9,7 +9,7 @@ from app.extensions import db
 from app.models import User
 from .schemas.user import UserSchema, LoginSchema
 
-bp = Blueprint('api.user', __name__, url_prefix='/api',
+bp = Blueprint('api-user', __name__, url_prefix='/api',
                description='Auth routes')
 
 

@@ -178,11 +178,13 @@ def filter_description(form):
     return q10
 
 
-def search_main(form, page):
+def search_main(form, page, page_size=None):
 
     q10 = filter_description(form)
 
-    result = q10.paginate(page, current_app.config['SEARCH_ITEMS_PER_PAGE'],
+    result = q10.paginate(page,
+                          page_size or
+                          current_app.config['SEARCH_ITEMS_PER_PAGE'],
                           False)
     total = 0
     for exp in q10:
