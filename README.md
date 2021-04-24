@@ -19,8 +19,8 @@ at https://moneycare.pythonanywhere.com/api/docs .
 - It has an admin section, provided by Flask-Admin. You can check out the code
 in the 'admin' blueprint.
 
-- The app includes integration with Sentry for error logging and with New Relic
-for performance monitoring.
+- The app includes integration with Sentry for error logging and performance
+monitoring.
 
 
 Check out the webapp at https://moneycare.pythonanywhere.com . Use demo username

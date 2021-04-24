@@ -144,3 +144,6 @@ wtforms==2.3.3
     # via
     #   flask-admin
     #   flask-wtf
+sentry-sdk==1.0.0
+    # via
+    #   -r requirements.in

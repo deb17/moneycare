@@ -66,3 +66,4 @@ webargs==8.0.0
 Werkzeug==1.0.1
 Whoosh==2.7.4
 WTForms==2.3.3
+sentry-sdk==1.0.0

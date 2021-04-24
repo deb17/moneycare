@@ -40,6 +40,7 @@ class Config:
     )
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+    SENTRY_URL = os.getenv('SENTRY_URL')
 
 
 class TestingConfig(Config):

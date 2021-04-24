@@ -1,5 +1,8 @@
 from flask import Flask, render_template, jsonify
 from flask_login import current_user
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
 from config import Config
 from app.extensions import (
     debug_toolbar,
@@ -36,6 +39,7 @@ def create_app(config=Config):
     register_extensions(app)
     register_filters(app)
     register_errorhandlers(app)
+    setup_sentry(app)
 
     app.register_blueprint(main_bp)
     app.register_blueprint(settings_bp)
@@ -65,6 +69,19 @@ def register_extensions(app):
     mail.init_app(app)
     api.init_app(app)
     jwt.init_app(app)
+
+
+def setup_sentry(app):
+
+    sentry_sdk.init(
+        dsn=app.config['SENTRY_URL'],
+        integrations=[FlaskIntegration()],
+
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=0.6
+    )
 
 
 def setup_for_api(api):
