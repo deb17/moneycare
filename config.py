@@ -40,11 +40,12 @@ class Config:
     )
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
-    SENTRY_URL = os.getenv('SENTRY_URL')
+    SENTRY_URL = None
 
 
 class ProductionConfig(Config):    # Required on PythonAnywhere
     WHOOSH_INDEX_PATH = os.path.join('moneycare', '.indexes')
+    SENTRY_URL = os.getenv('SENTRY_URL')
 
 
 class TestingConfig(Config):

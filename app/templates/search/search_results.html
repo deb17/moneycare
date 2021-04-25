@@ -14,6 +14,7 @@
 <h2 class="py-4">Search results</h2>
 <h4>Total number of results found is {{ expenses.total }}{{ '. Ranked by relevance.' if (whoosh and expenses.total > 0) }}</h4>
 {% if expenses.total > 0 %}
+<h5>Total value of all transactions is {{ total | format_currency }}</h5>
 <small>Click on a serial number to see details.</small>
 {% endif %}
 <div class="row">

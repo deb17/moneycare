@@ -73,15 +73,16 @@ def register_extensions(app):
 
 def setup_sentry(app):
 
-    sentry_sdk.init(
-        dsn=app.config['SENTRY_URL'],
-        integrations=[FlaskIntegration()],
+    if app.config['SENTRY_URL']:
+        sentry_sdk.init(
+            dsn=app.config['SENTRY_URL'],
+            integrations=[FlaskIntegration()],
 
-        # Set traces_sample_rate to 1.0 to capture 100%
-        # of transactions for performance monitoring.
-        # We recommend adjusting this value in production.
-        traces_sample_rate=0.6
-    )
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=0.6
+        )
 
 
 def setup_for_api(api):
