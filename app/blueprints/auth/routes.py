@@ -1,9 +1,12 @@
+import os
+
 from flask import (Blueprint, render_template, redirect,
-                   url_for, flash, request, session, current_app)
+                   url_for, flash, request, session)
 from flask_login import login_user, logout_user, current_user
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
 
+from config import Config, ProductionConfig
 from app.models import User, Social
 from app.extensions import db
 from app.blueprints.auth.forms import (
@@ -14,6 +17,10 @@ from app.blueprints.auth.forms import (
 )
 from app.blueprints.auth.email import send_email
 
+if os.getenv('ENV') == 'development':
+    authorized_url = Config.AUTHORIZED_URL
+else:
+    authorized_url = ProductionConfig.AUTHORIZED_URL
 
 bp = Blueprint('auth', __name__)
 google_blueprint = make_google_blueprint(
@@ -22,7 +29,7 @@ google_blueprint = make_google_blueprint(
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile'],
     redirect_to='auth.google_login',
-    authorized_url=current_app.config['AUTHORIZED_URL']
+    authorized_url=authorized_url
 )
 twitter_blueprint = make_twitter_blueprint(redirect_to='auth.twitter_login')
 
