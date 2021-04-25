@@ -43,6 +43,10 @@ class Config:
     SENTRY_URL = os.getenv('SENTRY_URL')
 
 
+class ProductionConfig(Config):    # Required on PythonAnywhere
+    WHOOSH_INDEX_PATH = os.path.join('moneycare', '.indexes')
+
+
 class TestingConfig(Config):
 
     TESTING = True
