@@ -1,5 +1,5 @@
 from flask import (Blueprint, render_template, redirect,
-                   url_for, flash, request, session)
+                   url_for, flash, request, session, current_app)
 from flask_login import login_user, logout_user, current_user
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
@@ -21,7 +21,8 @@ google_blueprint = make_google_blueprint(
         'openid',
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile'],
-    redirect_to='auth.google_login'
+    redirect_to='auth.google_login',
+    authorized_url=current_app.config['AUTHORIZED_URL']
 )
 twitter_blueprint = make_twitter_blueprint(redirect_to='auth.twitter_login')
 

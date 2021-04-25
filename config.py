@@ -18,6 +18,7 @@ class Config:
 
     GOOGLE_OAUTH_CLIENT_ID = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
     GOOGLE_OAUTH_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
+    AUTHORIZED_URL = '/google/authorized'
     OAUTHLIB_RELAX_TOKEN_SCOPE = True
     TWITTER_OAUTH_CLIENT_KEY = os.getenv('TWITTER_OAUTH_CLIENT_KEY')
     TWITTER_OAUTH_CLIENT_SECRET = os.getenv('TWITTER_OAUTH_CLIENT_SECRET')
@@ -46,6 +47,9 @@ class Config:
 class ProductionConfig(Config):    # Required on PythonAnywhere
     WHOOSH_INDEX_PATH = os.path.join('moneycare', '.indexes')
     SENTRY_URL = os.getenv('SENTRY_URL')
+    AUTHORIZED_URL = (
+        'https://moneycare.pythonanywhere.com.xip.io/google/authorized'
+    )
 
 
 class TestingConfig(Config):
