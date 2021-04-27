@@ -3,6 +3,7 @@ from flask import (Blueprint, render_template, redirect,
 from flask_login import login_user, logout_user, current_user
 from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
+from werkzeug.urls import URL, url_parse, url_unparse, url_decode, url_encode
 
 from app.models import User, Social
 from app.extensions import db
@@ -23,6 +24,31 @@ google_blueprint = make_google_blueprint(
     redirect_to='auth.google_login'
 )
 twitter_blueprint = make_twitter_blueprint(redirect_to='auth.twitter_login')
+
+
+@google_blueprint.after_request
+def change_redirect_uri(response):
+    '''Google does not allow pythonanywhere as the `redirect_uri`. So we
+    need to initiate the login here and do it on herokuapp domain.
+    '''
+
+    loc = response.headers.get('Location')
+    parsed = url_parse(loc)
+    d = url_decode(parsed.query)
+    d['redirect_uri'] = (
+        'https://debs-moneycare.herokuapp.com/google/authorized'
+    )
+    query = url_encode(d)
+    new = URL(
+        scheme='https',
+        netloc=parsed.netloc,
+        path=parsed.path,
+        query=query,
+        fragment=parsed.fragment
+    )
+    loc = url_unparse(new)
+    response.headers.set('Location', loc)
+    return response
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -96,11 +122,13 @@ def register():
 
 @bp.route('/google-login')
 def google_login():
-    if not google.authorized:
-        return redirect(url_for('google.login'))
+    if not request.args.get('email'):
+        if not google.authorized:
+            return redirect(url_for('google.login'))
 
-    resp = google.get('/oauth2/v1/userinfo')
-    retval = resp.json()
+    retval = {}
+    retval['name'] = request.args.get('name')
+    retval['email'] = request.args.get('email')
 
     user = User.query.outerjoin(Social) \
         .filter(

@@ -10,15 +10,9 @@
 
     <p class="lead"><img src="{{ url_for('static', filename='images/icons/key.svg') }}" alt="user" class="icon"> <a href="{{ url_for('auth.password_reset_request') }}">Forgot password</a></p>
     
-    {% if request.args.get('next') %}
-      <p class="lead"><img src="{{ url_for('static', filename='images/icons/google.svg') }}" alt="user" class="icon"> <a href="{{ url_for('auth.google_login', next=request.args.get('next')) }}">Sign in with Google</a></p>
+    <p class="lead"><img src="{{ url_for('static', filename='images/icons/google.svg') }}" alt="user" class="icon"> <a href="{{ url_for('auth.google_login') }}">Sign in with Google</a></p>
 
-      <p class="lead"><img src="{{ url_for('static', filename='images/icons/twitter.svg') }}" alt="user" class="icon"> <a href="{{ url_for('auth.twitter_login', next=request.args.get('next')) }}">Sign in with Twitter</a></p>
-    {% else %}
-      <p class="lead"><img src="{{ url_for('static', filename='images/icons/google.svg') }}" alt="user" class="icon"> <a href="{{ url_for('auth.google_login') }}">Sign in with Google</a></p>
-
-      <p class="lead"><img src="{{ url_for('static', filename='images/icons/twitter.svg') }}" alt="user" class="icon"> <a href="{{ url_for('auth.twitter_login') }}">Sign in with Twitter</a></p>
-    {% endif %}
+    <p class="lead"><img src="{{ url_for('static', filename='images/icons/twitter.svg') }}" alt="user" class="icon"> <a href="{{ url_for('auth.twitter_login') }}">Sign in with Twitter</a></p>
   </div>
 </div>
 {% endblock %}
