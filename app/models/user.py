@@ -66,9 +66,11 @@ class User(UserMixin, db.Model):
 
         if self.email:
             return self.uname
-        if self.social.gmail:
-            return self.social.gname
-        return self.social.handle
+        if self.social:
+            if self.social.gmail:
+                return self.social.gname
+            return self.social.handle
+        return ''
 
     @username.setter
     def username(self, value):

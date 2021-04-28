@@ -1,1 +1,1 @@
-from app.blueprints.auth.routes import bp, google_blueprint, twitter_blueprint
+from app.blueprints.auth.routes import bp, twitter_blueprint

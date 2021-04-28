@@ -1,9 +1,7 @@
 from flask import (Blueprint, render_template, redirect,
                    url_for, flash, request, session)
 from flask_login import login_user, logout_user, current_user
-from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
-from werkzeug.urls import URL, url_parse, url_unparse, url_decode, url_encode
 
 from app.models import User, Social
 from app.extensions import db
@@ -16,39 +14,7 @@ from app.blueprints.auth.forms import (
 from app.blueprints.auth.email import send_email
 
 bp = Blueprint('auth', __name__)
-google_blueprint = make_google_blueprint(
-    scope=[
-        'openid',
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile'],
-    redirect_to='auth.google_login'
-)
 twitter_blueprint = make_twitter_blueprint(redirect_to='auth.twitter_login')
-
-
-@google_blueprint.after_request
-def change_redirect_uri(response):
-    '''Google does not allow pythonanywhere as the `redirect_uri`. So we
-    need to initiate the login here and do it on herokuapp domain.
-    '''
-
-    loc = response.headers.get('Location')
-    parsed = url_parse(loc)
-    d = url_decode(parsed.query)
-    d['redirect_uri'] = (
-        'https://debs-moneycare.herokuapp.com/google/authorized'
-    )
-    query = url_encode(d)
-    new = URL(
-        scheme='https',
-        netloc=parsed.netloc,
-        path=parsed.path,
-        query=query,
-        fragment=parsed.fragment
-    )
-    loc = url_unparse(new)
-    response.headers.set('Location', loc)
-    return response
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -74,10 +40,6 @@ def login():
 @bp.route('/logout')
 def logout():
     logout_user()
-    try:
-        del google_blueprint.token
-    except Exception:
-        pass
     try:
         del twitter_blueprint.token
     except Exception:
@@ -122,9 +84,14 @@ def register():
 
 @bp.route('/google-login')
 def google_login():
+    '''Since Google does not allow pythonanywhere subdomain to be
+    specified as the `redirect uri`, I have chosen to do the google
+    login on herokuapp domain and forward the results back to this
+    site.
+    '''
+
     if not request.args.get('email'):
-        if not google.authorized:
-            return redirect(url_for('google.login'))
+        return redirect('https://debs-moneycare.herokuapp.com/google-login')
 
     retval = {}
     retval['name'] = request.args.get('name')
@@ -151,7 +118,7 @@ def google_login():
 
     login_user(user)
 
-    return redirect(request.args.get('next', url_for('main.dashboard')))
+    return redirect(url_for('main.dashboard'))
 
 
 @bp.route('/twitter-login')
@@ -185,7 +152,7 @@ def twitter_login():
 
     login_user(user)
 
-    return redirect(request.args.get('next', url_for('main.dashboard')))
+    return redirect(url_for('main.dashboard'))
 
 
 @bp.route('/reset', methods=['GET', 'POST'])
