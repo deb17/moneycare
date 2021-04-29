@@ -87,11 +87,8 @@ def google_login():
     '''Since Google does not allow pythonanywhere subdomain to be
     specified as the `redirect uri`, I have chosen to do the google
     login on herokuapp domain and forward the results back to this
-    site.
+    site. See the deb17/moneycare-heroku repo.
     '''
-
-    if not request.args.get('email'):
-        return redirect('https://debs-moneycare.herokuapp.com/google-login')
 
     retval = {}
     retval['name'] = request.args.get('name')
