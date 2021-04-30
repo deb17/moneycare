@@ -42,6 +42,8 @@ def create():
         db.session.add(e)
         db.session.commit()
         flash('New expense created.', 'success')
+        if request.form.get('submit2') == 'Save and add another':
+            return redirect(url_for('expense.create'))
         return redirect(url_for('expense.list_expenses'))
 
     return render_template('expense/new.html', title='New expense',

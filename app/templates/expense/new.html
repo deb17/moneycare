@@ -1,6 +1,8 @@
 {% extends 'expense/common.html' %}
 
 {% block buttons %}
-<a href="{{ url_for('expense.create') }}" class="btn btn-info">Reset</a>
-<a href="{{ url_for('expense.list_expenses') }}" class="btn btn-warning">Cancel</a>
+<input type="submit" name="submit2" class="btn btn-primary" value="Save and add another">
+<br class="d-inline d-sm-none">
+<a href="{{ url_for('expense.create') }}" class="btn btn-info mt-2 mt-sm-0">Reset</a>
+<a href="{{ url_for('expense.list_expenses') }}" class="btn btn-warning mt-2 mt-sm-0">Cancel</a>
 {% endblock %}
