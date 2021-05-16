@@ -1,7 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'errors/base.html' %}
+
+{% set title = 'Forbidden' %}
 
 {% block content %}
-<h1 class="mt-5">Error 403</h1>
+<h1>Error 403</h1>
 <h2>Forbidden!</h2>
-<p>Go back to <a href="{{ url_for('main.home') }}">home</a> page.</p>
+<p>Go back to {% if current_user.is_authenticated %}<a href="{{ url_for('main.home') }}">home</a>{% else %}<a href="{{ url_for('main.index') }}">index</a>{% endif %} page.</p>
 {% endblock %}
