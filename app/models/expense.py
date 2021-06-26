@@ -62,7 +62,7 @@ class Expense(db.Model):
     )
     created_on = db.Column(db.DateTime, default=db.func.now())
     updated_on = db.Column(db.DateTime, onupdate=db.func.now(),
-                           default=db.func.now(), index=True)
+                           default=db.func.now())
 
     @hybrid_property
     def amount(self):
@@ -108,3 +108,6 @@ class Expense(db.Model):
 
     def __repr__(self):
         return f'<Expense: {self.amount}>'
+
+
+db.Index('idx_expenses_date_updated_on', Expense.date, Expense.updated_on)
