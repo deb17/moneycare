@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_login import current_user
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -13,7 +14,8 @@ from app.extensions import (
     moment,
     mail,
     api,
-    jwt
+    jwt,
+    limiter
 )
 from app.blueprints.main import bp as main_bp
 from app.blueprints.settings import bp as settings_bp
@@ -25,7 +27,8 @@ from app.blueprints.admin import admin_create_module
 from app.blueprints.api import (
     api_user_bp,
     api_expense_bp,
-    api_search_bp
+    api_search_bp,
+    block_list
 )
 
 
@@ -33,6 +36,7 @@ def create_app(config=Config):
 
     app = Flask(__name__)
     app.config.from_object(config)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
 
     admin_create_module(app)
     register_extensions(app)
@@ -67,6 +71,7 @@ def register_extensions(app):
     mail.init_app(app)
     api.init_app(app)
     jwt.init_app(app)
+    limiter.init_app(app)
 
 
 def setup_sentry(app):
@@ -95,6 +100,17 @@ def setup_for_api(api):
         'bearerAuth',
         {'type': 'http', 'scheme': 'bearer', 'bearerFormat': 'JWT'}
     )
+
+    limiter.limit('20/day;10/hour;5/minute')(api_user_bp)
+    limiter.limit('50/day;30/hour;5/minute')(api_expense_bp)
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_in_blocklist(jwt_headers, jwt_payload):
+
+        if jwt_payload['type'] == 'refresh':
+            return False
+        jti = jwt_payload['jti']
+        return jti in block_list
 
 
 def register_filters(app):

@@ -2,7 +2,7 @@ from flask import jsonify
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import (
-    create_access_token, jwt_required, get_jwt_identity
+    create_access_token, jwt_required, get_jwt_identity, get_jwt
 )
 
 from app.extensions import db
@@ -11,6 +11,8 @@ from .schemas.user import UserSchema, LoginSchema
 
 bp = Blueprint('api-user', __name__, url_prefix='/api',
                description='Auth routes')
+
+block_list = set()
 
 
 @bp.route('/login', methods=['POST'])
@@ -31,6 +33,19 @@ def login(args):
             return jsonify(access_token=access_token)
 
     return jsonify(msg='Bad username or password'), 401
+
+
+@bp.route('/revoke', methods=['POST'])
+@bp.response(200)
+@bp.doc(security=[{'bearerAuth': []}])
+@jwt_required()
+def revoke():
+    '''Logout from MoneyCare app.'''
+
+    jti = get_jwt()['jti']
+    block_list.add(jti)
+
+    return jsonify(message='Successfully logged out.')
 
 
 @bp.route('/user')

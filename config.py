@@ -38,6 +38,7 @@ class Config:
 
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
     SENTRY_URL = None
+    RATELIMIT_HEADERS_ENABLED = True
 
 
 class ProductionConfig(Config):    # Required on PythonAnywhere

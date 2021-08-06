@@ -7,6 +7,8 @@ from flask_moment import Moment
 from flask_mail import Mail
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 debug_toolbar = DebugToolbarExtension()
 db = SQLAlchemy()
@@ -23,3 +25,4 @@ api = Api()
 api.DEFAULT_ERROR_RESPONSE_NAME = None
 
 jwt = JWTManager()
+limiter = Limiter(key_func=get_remote_address)
