@@ -44,5 +44,5 @@
   {% endfor %}
 </div>
 {% if expenses.total > 0 %}
-{{ render_pagination(expenses, prev='prev', next='next') }}
+{{ render_pagination(expenses, prev='prev', next='next', style="flex-wrap: wrap;") }}
 {% endif %}
