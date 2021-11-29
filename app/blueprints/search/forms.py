@@ -2,7 +2,8 @@ from calendar import month_abbr
 
 from flask_wtf import FlaskForm
 from wtforms import (StringField, DateField, SelectField, SelectMultipleField,
-                     DecimalField, BooleanField, SubmitField)
+                     BooleanField, SubmitField)
+from wtforms.fields.html5 import DecimalField
 from wtforms.validators import Length, Optional, ValidationError
 from wtforms.widgets import Select, html_params, HTMLString
 
